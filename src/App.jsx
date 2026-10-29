@@ -6,6 +6,7 @@ import ScrollProgress from './components/ScrollProgress';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import DimensionPhilosophy from './components/DimensionPhilosophy';
+import DimensionalScroll3D from './components/DimensionalScroll3D';
 import Programs from './components/Programs';
 import CampusShowcase from './components/CampusShowcase';
 import DailyDiscipline from './components/DailyDiscipline';
@@ -69,6 +70,9 @@ export default function App() {
         >
           <DimensionPhilosophy />
         </motion.div>
+
+        {/* AIAF / Dribbble-grade Pinned 3D Interactive Dimensional Scroll Journey */}
+        <DimensionalScroll3D onOpenModal={() => setIsModalOpen(true)} />
 
         <motion.div
           initial="hidden"
