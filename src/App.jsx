@@ -12,18 +12,16 @@ import TestimonialsAndFaculty from './components/TestimonialsAndFaculty';
 import ContactAndLocation from './components/ContactAndLocation';
 import Footer from './components/Footer';
 import VisitModal from './components/VisitModal';
+import FloatingConnector from './components/FloatingConnector';
+import TesserBotModal from './components/TesserBotModal';
 
 export default function App() {
   const [showPreloader, setShowPreloader] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBotOpen, setIsBotOpen] = useState(false);
 
   const handlePreloaderComplete = () => {
     setShowPreloader(false);
-  };
-
-  const handleReplayIntro = () => {
-    setShowPreloader(true);
-    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   return (
@@ -40,7 +38,7 @@ export default function App() {
         style={{ pointerEvents: 'none' }} 
       />
 
-      {/* Floating Glassmorphism Navbar */}
+      {/* Floating Minimalist Navbar */}
       <Navbar onOpenModal={() => setIsModalOpen(true)} />
 
       {/* Main Content Sections */}
@@ -55,10 +53,19 @@ export default function App() {
         <ContactAndLocation />
       </main>
 
-      {/* Cinematic Footer with Replay Button */}
-      <Footer onReplayIntro={handleReplayIntro} />
+      {/* Clean Luxury Footer without Replay button */}
+      <Footer />
 
-      {/* Interactive Admission Inquiry Modal */}
+      {/* Floating Vertical Connector Capsule (Call, WhatsApp, Instagram, Facebook, Bot) */}
+      <FloatingConnector onOpenBot={() => setIsBotOpen(!isBotOpen)} />
+
+      {/* Interactive AI Admission Counselor Chatbot */}
+      <TesserBotModal 
+        isOpen={isBotOpen} 
+        onClose={() => setIsBotOpen(false)} 
+      />
+
+      {/* Priority Admission Inquiry Modal */}
       <VisitModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 

@@ -1,10 +1,10 @@
 import React from 'react';
-import { ArrowUp, Phone, MapPin, RotateCcw } from 'lucide-react';
+import { ArrowUp, Phone, MapPin } from 'lucide-react';
 import InstagramIcon from './InstagramIcon';
 import TesserLogo from './TesserLogo';
 import { sound } from '../utils/sound';
 
-export default function Footer({ onReplayIntro }) {
+export default function Footer() {
   const scrollToTop = () => {
     sound.playDimensionalWhoosh();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -59,39 +59,6 @@ export default function Footer({ onReplayIntro }) {
             >
               The first professional campus exclusively engineered for Cost and Management Accounting (CMA) in Attingal, Trivandrum. Elite faculty, daily diagnostic tests, small batches, and dedicated residential hostels for boys and girls.
             </p>
-
-            <button
-              onClick={() => {
-                sound.playClick();
-                if (onReplayIntro) onReplayIntro();
-              }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                background: '#fdf2f7',
-                border: '1px solid rgba(125, 10, 66, 0.25)',
-                color: '#7d0a42',
-                padding: '8px 16px',
-                borderRadius: 9999,
-                fontSize: '0.8rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#7d0a42';
-                e.currentTarget.style.color = '#ffffff';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#fdf2f7';
-                e.currentTarget.style.color = '#7d0a42';
-              }}
-            >
-              <RotateCcw size={14} />
-              <span>Replay Cinematic Dimensional Intro</span>
-            </button>
           </div>
 
           {/* Col 2: Academic Dimensions */}
