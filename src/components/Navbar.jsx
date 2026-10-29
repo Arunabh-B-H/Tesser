@@ -1,34 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, Volume2, VolumeX, Menu, X, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Phone, Menu, X, ArrowUpRight } from 'lucide-react';
 import TesserLogo from './TesserLogo';
-import { sound } from '../utils/sound';
 
 export default function Navbar({ onOpenModal }) {
   const [scrolled, setScrolled] = useState(false);
-  const [isAudioActive, setIsAudioActive] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      setScrolled(window.scrollY > 25);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSoundToggle = () => {
-    const active = sound.toggleSound();
-    setIsAudioActive(active);
-  };
-
+  // Streamlined, clean, non-cluttered navigation links
   const navLinks = [
-    { name: 'Why CMA Exclusive', href: '#philosophy' },
+    { name: 'Why CMA', href: '#philosophy' },
     { name: 'Programs', href: '#programs' },
     { name: 'Campus & Hostels', href: '#campus' },
-    { name: 'Daily Discipline', href: '#discipline' },
-    { name: 'Eligibility Matrix', href: '#calculator' },
-    { name: 'Location & Contact', href: '#contact' },
+    { name: 'Eligibility', href: '#calculator' },
+    { name: 'Contact', href: '#contact' },
   ];
 
   return (
@@ -40,13 +33,13 @@ export default function Navbar({ onOpenModal }) {
           left: 0,
           right: 0,
           zIndex: 40,
-          transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-          padding: scrolled ? '12px 24px' : '20px 24px',
-          background: scrolled ? 'rgba(255, 255, 255, 0.94)' : 'rgba(255, 255, 255, 0.8)',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          padding: scrolled ? '10px 32px' : '16px 32px',
+          background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.88)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: scrolled ? '1px solid rgba(125, 10, 66, 0.12)' : '1px solid rgba(125, 10, 66, 0.05)',
-          boxShadow: scrolled ? '0 8px 25px -5px rgba(125, 10, 66, 0.06)' : 'none',
+          borderBottom: scrolled ? '1px solid rgba(125, 10, 66, 0.12)' : '1px solid rgba(125, 10, 66, 0.06)',
+          boxShadow: scrolled ? '0 4px 20px -2px rgba(125, 10, 66, 0.05)' : 'none',
         }}
       >
         <div 
@@ -55,39 +48,43 @@ export default function Navbar({ onOpenModal }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            maxWidth: 1280,
+            margin: '0 auto',
+            width: '100%',
           }}
         >
-          {/* Logo */}
+          {/* Logo on Left */}
           <a 
             href="#" 
-            onClick={() => sound.playClick()}
-            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           >
             <TesserLogo size="md" showTagline={true} />
           </a>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Centered, Single-line, No Wrapping */}
           <nav 
             className="hidden-mobile"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 28,
+              gap: 32,
+              whiteSpace: 'nowrap',
             }}
           >
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                onClick={() => sound.playClick()}
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '0.9rem',
+                  fontSize: '0.92rem',
                   fontWeight: 600,
                   color: '#334155',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                   letterSpacing: '0.01em',
+                  whiteSpace: 'nowrap',
+                  padding: '6px 2px',
                   position: 'relative',
                 }}
                 onMouseEnter={(e) => {
@@ -102,106 +99,79 @@ export default function Navbar({ onOpenModal }) {
             ))}
           </nav>
 
-          {/* Right Action Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            {/* Ambient Sound Toggle Button */}
-            <button
-              onClick={handleSoundToggle}
-              title={isAudioActive ? 'Mute Ambient Audio' : 'Enable Cinematic Ambient Audio'}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                background: isAudioActive ? '#fdf2f7' : 'rgba(125, 10, 66, 0.04)',
-                border: isAudioActive ? '1px solid #7d0a42' : '1px solid rgba(125, 10, 66, 0.15)',
-                borderRadius: 9999,
-                padding: '7px 14px',
-                color: isAudioActive ? '#7d0a42' : '#64748b',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              {isAudioActive ? <Volume2 size={14} color="#7d0a42" /> : <VolumeX size={14} />}
-              <span className="hidden-tablet" style={{ display: 'inline-block' }}>
-                {isAudioActive ? 'AUDIO ON' : 'AUDIO OFF'}
-              </span>
-              {isAudioActive && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <span className="audio-bar-1" />
-                  <span className="audio-bar-2" />
-                  <span className="audio-bar-3" />
-                </div>
-              )}
-            </button>
-
-            {/* Direct Call Quick Link */}
+          {/* Right Action Controls - Minimalist & Balanced */}
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 16,
+              flexShrink: 0,
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {/* Direct Phone Hotline Link */}
             <a
               href="tel:9567115221"
-              onClick={() => sound.playClick()}
               className="hidden-mobile"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 7,
+                gap: 6,
                 color: '#1e293b',
                 textDecoration: 'none',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.84rem',
+                fontSize: '0.85rem',
                 fontWeight: 700,
                 padding: '8px 14px',
                 borderRadius: 10,
                 border: '1px solid rgba(125, 10, 66, 0.15)',
                 background: '#ffffff',
-                boxShadow: '0 2px 6px rgba(125, 10, 66, 0.04)',
                 transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#7d0a42';
                 e.currentTarget.style.color = '#7d0a42';
+                e.currentTarget.style.background = '#fdf2f7';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = 'rgba(125, 10, 66, 0.15)';
                 e.currentTarget.style.color = '#1e293b';
+                e.currentTarget.style.background = '#ffffff';
               }}
             >
-              <Phone size={14} style={{ color: '#7d0a42' }} />
+              <Phone size={13} style={{ color: '#7d0a42' }} />
               <span>9567115221</span>
             </a>
 
-            {/* CTA Button */}
+            {/* Clean Primary CTA Button */}
             <button
               onClick={() => {
-                sound.playClick();
                 if (onOpenModal) onOpenModal();
               }}
-              className="btn-primary-plum"
+              className="btn-primary-plum shimmer-sweep"
               style={{
-                padding: '10px 20px',
+                padding: '9px 20px',
                 fontSize: '0.88rem',
+                fontWeight: 700,
                 borderRadius: 10,
+                whiteSpace: 'nowrap',
               }}
             >
-              <Sparkles size={14} />
               <span>Admissions Open</span>
             </button>
 
-            {/* Mobile Hamburger Toggle */}
+            {/* Mobile Hamburger Button */}
             <button
-              onClick={() => {
-                sound.playClick();
-                setMobileMenuOpen(!mobileMenuOpen);
-              }}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="mobile-toggle-btn"
+              aria-label="Toggle navigation"
               style={{
                 display: 'none',
                 background: '#fdf2f7',
                 border: '1px solid rgba(125, 10, 66, 0.2)',
                 color: '#7d0a42',
-                padding: 8,
+                padding: 7,
                 borderRadius: 8,
                 cursor: 'pointer',
               }}
@@ -216,32 +186,29 @@ export default function Navbar({ onOpenModal }) {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.22 }}
             style={{
               position: 'fixed',
-              top: 76,
+              top: 72,
               left: 16,
               right: 16,
               zIndex: 39,
               background: '#ffffff',
-              border: '1px solid rgba(125, 10, 66, 0.25)',
+              border: '1px solid rgba(125, 10, 66, 0.22)',
               borderRadius: 18,
               padding: '24px 20px',
               boxShadow: '0 20px 50px rgba(125, 10, 66, 0.15)',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => {
-                    sound.playClick();
-                    setMobileMenuOpen(false);
-                  }}
+                  onClick={() => setMobileMenuOpen(false)}
                   style={{
                     fontFamily: 'var(--font-display)',
                     fontSize: '1.05rem',
@@ -270,8 +237,8 @@ export default function Navbar({ onOpenModal }) {
                     color: '#7d0a42',
                     textDecoration: 'none',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.9rem',
-                    fontWeight: 700,
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
                   }}
                 >
                   <Phone size={15} style={{ color: '#7d0a42' }} />
@@ -280,7 +247,6 @@ export default function Navbar({ onOpenModal }) {
 
                 <button
                   onClick={() => {
-                    sound.playClick();
                     setMobileMenuOpen(false);
                     if (onOpenModal) onOpenModal();
                   }}
@@ -304,24 +270,6 @@ export default function Navbar({ onOpenModal }) {
           .mobile-toggle-btn {
             display: flex !important;
           }
-        }
-        @media (max-width: 768px) {
-          .hidden-tablet {
-            display: none !important;
-          }
-        }
-        .audio-bar-1, .audio-bar-2, .audio-bar-3 {
-          display: inline-block;
-          width: 2px;
-          background-color: #7d0a42;
-          border-radius: 1px;
-        }
-        .audio-bar-1 { height: 10px; animation: bounceBar 0.6s infinite alternate ease-in-out; }
-        .audio-bar-2 { height: 14px; animation: bounceBar 0.8s 0.2s infinite alternate ease-in-out; }
-        .audio-bar-3 { height: 8px; animation: bounceBar 0.7s 0.4s infinite alternate ease-in-out; }
-        @keyframes bounceBar {
-          0% { height: 4px; }
-          100% { height: 14px; }
         }
       `}</style>
     </>
