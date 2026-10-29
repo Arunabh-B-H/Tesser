@@ -166,8 +166,9 @@ export default function TesserBotModal({ isOpen, onClose }) {
                   width: '11px',
                   height: '11px',
                   borderRadius: '50%',
-                  backgroundColor: '#10b981',
+                  backgroundColor: '#c41e73',
                   border: '2px solid #ffffff',
+                  boxShadow: '0 0 6px #e62886',
                 }}
               />
             </div>

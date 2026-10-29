@@ -41,8 +41,8 @@ export default function TesserBotTrigger({ isOpen, onClick }) {
             width: '8px',
             height: '8px',
             borderRadius: '50%',
-            backgroundColor: '#10b981',
-            boxShadow: '0 0 8px #10b981',
+            backgroundColor: '#c41e73',
+            boxShadow: '0 0 8px #e62886',
           }}
         />
         <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
@@ -133,9 +133,9 @@ export default function TesserBotTrigger({ isOpen, onClick }) {
             width: '14px',
             height: '14px',
             borderRadius: '50%',
-            backgroundColor: '#10b981',
+            backgroundColor: '#c41e73',
             border: '2px solid #ffffff',
-            boxShadow: '0 0 10px #10b981',
+            boxShadow: '0 0 10px #e62886',
           }}
         />
 

@@ -27,9 +27,9 @@ export default function FloatingConnector() {
           gap: '12px',
         }}
       >
-        {/* Glowing Active Status Beacon at Top */}
+        {/* Glowing Active Status Beacon at Top — Matching Logo & Theme (Deep Plum / Magenta) */}
         <div
-          title="Counselors Active & Online"
+          title="Tesser Admissions Live & Online"
           style={{
             position: 'relative',
             width: '10px',
@@ -47,9 +47,9 @@ export default function FloatingConnector() {
               width: '10px',
               height: '10px',
               borderRadius: '50%',
-              backgroundColor: '#10b981',
-              boxShadow: '0 0 12px 2px #10b981',
-              animation: 'pulseGlow 2s infinite ease-in-out',
+              backgroundColor: '#c41e73', // Vibrant Theme Plum / Magenta
+              boxShadow: '0 0 14px 3px #e62886',
+              animation: 'pulsePlumGlow 2s infinite ease-in-out',
             }}
           />
         </div>
@@ -86,7 +86,7 @@ export default function FloatingConnector() {
             <Phone size={20} strokeWidth={2} />
           </a>
 
-          {/* Quick Dual-Phone Tooltip Displayed to the Right of the Left Dock */}
+          {/* Quick Dual-Phone Tooltip */}
           {showPhoneTooltip && (
             <div
               style={{
@@ -112,7 +112,7 @@ export default function FloatingConnector() {
           )}
         </div>
 
-        {/* 2. WhatsApp Direct Button */}
+        {/* 2. Official WhatsApp Brand Logo Button */}
         <a
           href="https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20am%20interested%20in%20CMA%20admissions%20and%20campus%20facilities."
           target="_blank"
@@ -123,7 +123,7 @@ export default function FloatingConnector() {
             height: '44px',
             borderRadius: '50%',
             backgroundColor: '#1f2937',
-            color: '#22c55e',
+            color: '#25D366', // Official WhatsApp Brand Color
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -132,19 +132,19 @@ export default function FloatingConnector() {
             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#22c55e';
+            e.currentTarget.style.backgroundColor = '#25D366';
             e.currentTarget.style.color = '#ffffff';
             e.currentTarget.style.transform = 'scale(1.1)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = '#1f2937';
-            e.currentTarget.style.color = '#22c55e';
+            e.currentTarget.style.color = '#25D366';
             e.currentTarget.style.transform = 'scale(1)';
           }}
         >
-          {/* Authentic WhatsApp SVG */}
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+          {/* Authentic Official WhatsApp Logo (Speech bubble with phone handset inside) */}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.031 2C6.495 2 2 6.495 2 12.031c0 1.97.57 3.82 1.56 5.39L2.05 22l4.75-1.51a9.98 9.98 0 0 0 5.231 1.48c5.536 0 10.031-4.495 10.031-10.031S17.567 2 12.031 2zm0 18.23c-1.63 0-3.17-.46-4.51-1.27l-.32-.2-3.35 1.07 1.08-3.26-.21-.34a8.21 8.21 0 0 1-1.28-4.4c0-4.55 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.55-3.7 8.24-8.24 8.24zm4.81-6.19c-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.58.13-.17.26-.67.85-.82 1.02-.15.17-.3.2-.56.07-.26-.13-1.1-.41-2.1-1.3-.78-.7-1.31-1.56-1.46-1.82-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.33-.02-.46-.07-.13-.58-1.4-.8-1.92-.21-.51-.43-.44-.59-.45l-.5-.01c-.17 0-.46.06-.7.33-.24.26-.92.9-.92 2.2 0 1.3.94 2.56 1.07 2.74.13.17 1.85 2.83 4.49 3.97.63.27 1.12.43 1.5.55.63.2 1.2.17 1.65.1.5-.07 1.54-.63 1.76-1.24.22-.61.22-1.13.15-1.24-.07-.11-.25-.17-.51-.3z" />
           </svg>
         </a>
 
@@ -215,7 +215,7 @@ export default function FloatingConnector() {
       </aside>
 
       <style>{`
-        @keyframes pulseGlow {
+        @keyframes pulsePlumGlow {
           0%, 100% {
             transform: scale(1);
             opacity: 0.9;
@@ -223,7 +223,7 @@ export default function FloatingConnector() {
           50% {
             transform: scale(1.3);
             opacity: 1;
-            box-shadow: 0 0 16px 4px #10b981;
+            box-shadow: 0 0 18px 5px #e62886;
           }
         }
         @media (max-width: 640px) {
