@@ -72,6 +72,9 @@ export default function App() {
           <DimensionPhilosophy />
         </motion.div>
 
+        {/* Pinned Scroll-Driven Visionary Leadership Showcase: Abhinav & Ajmal */}
+        <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
+
         {/* AIAF / Dribbble-grade Pinned 3D Interactive Dimensional Scroll Journey */}
         <DimensionalScroll3D onOpenModal={() => setIsModalOpen(true)} />
 
@@ -119,9 +122,6 @@ export default function App() {
         >
           <EligibilityCalculator onOpenModal={() => setIsModalOpen(true)} />
         </motion.div>
-
-        {/* Pinned Scroll-Driven Visionary Leadership Showcase: Abhinav & Ajmal */}
-        <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
 
         <motion.div
           initial="hidden"

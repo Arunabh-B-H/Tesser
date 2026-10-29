@@ -18,9 +18,9 @@ export default function Navbar({ onOpenModal }) {
   // Streamlined, clean, non-cluttered navigation links
   const navLinks = [
     { name: 'Why CMA', href: '#philosophy' },
+    { name: 'Founders', href: '#founders' },
     { name: 'Programs', href: '#programs' },
     { name: 'Campus & Hostels', href: '#campus' },
-    { name: 'Founders', href: '#founders' },
     { name: 'Video Reviews', href: '#videos' },
     { name: 'Eligibility', href: '#calculator' },
     { name: 'Contact', href: '#contact' },

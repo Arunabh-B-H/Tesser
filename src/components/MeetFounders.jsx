@@ -130,77 +130,7 @@ export default function MeetFounders({ onOpenModal }) {
           }}
         />
 
-        {/* Top Floating Founder Switcher Pill */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 86,
-            left: 0,
-            right: 0,
-            zIndex: 30,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0 24px',
-          }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: 'rgba(255, 255, 255, 0.94)',
-              border: '1.5px solid rgba(125, 10, 66, 0.18)',
-              borderRadius: 9999,
-              padding: '6px 8px',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '0 10px 30px rgba(125, 10, 66, 0.08)',
-            }}
-          >
-            {founders.map((f, idx) => {
-              const isSelected = activeFounder === idx;
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => scrollToFounder(idx)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '8px 20px',
-                    borderRadius: 9999,
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '0.86rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
-                    border: 'none',
-                    background: isSelected
-                      ? 'linear-gradient(135deg, #931252, #7d0a42)'
-                      : 'transparent',
-                    color: isSelected ? '#ffffff' : '#64748b',
-                    boxShadow: isSelected
-                      ? '0 4px 15px rgba(125, 10, 66, 0.35)'
-                      : 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.74rem',
-                      opacity: isSelected ? 0.9 : 0.6,
-                    }}
-                  >
-                    0{idx + 1}
-                  </span>
-                  <span>{f.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Main Content Area */}
+        {/* Main Content Area - Centered in 100vh Viewport */}
         <div
           className="container-max"
           style={{
@@ -209,7 +139,7 @@ export default function MeetFounders({ onOpenModal }) {
             width: '100%',
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '90px 32px 50px 32px',
+            padding: '30px 32px 30px 32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
