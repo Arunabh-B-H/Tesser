@@ -12,6 +12,7 @@ import CampusShowcase from './components/CampusShowcase';
 import DailyDiscipline from './components/DailyDiscipline';
 import VideoReviews from './components/VideoReviews';
 import EligibilityCalculator from './components/EligibilityCalculator';
+import MeetFounders from './components/MeetFounders';
 import TestimonialsAndFaculty from './components/TestimonialsAndFaculty';
 import ContactAndLocation from './components/ContactAndLocation';
 import Footer from './components/Footer';
@@ -118,6 +119,9 @@ export default function App() {
         >
           <EligibilityCalculator onOpenModal={() => setIsModalOpen(true)} />
         </motion.div>
+
+        {/* Pinned Scroll-Driven Visionary Leadership Showcase: Abhinav & Ajmal */}
+        <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
 
         <motion.div
           initial="hidden"

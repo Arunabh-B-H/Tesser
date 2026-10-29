@@ -20,6 +20,7 @@ export default function Navbar({ onOpenModal }) {
     { name: 'Why CMA', href: '#philosophy' },
     { name: 'Programs', href: '#programs' },
     { name: 'Campus & Hostels', href: '#campus' },
+    { name: 'Founders', href: '#founders' },
     { name: 'Video Reviews', href: '#videos' },
     { name: 'Eligibility', href: '#calculator' },
     { name: 'Contact', href: '#contact' },
@@ -68,7 +69,7 @@ export default function Navbar({ onOpenModal }) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 24,
+              gap: 20,
               whiteSpace: 'nowrap',
             }}
           >
