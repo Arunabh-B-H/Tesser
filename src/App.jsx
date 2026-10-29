@@ -9,6 +9,7 @@ import DimensionPhilosophy from './components/DimensionPhilosophy';
 import Programs from './components/Programs';
 import CampusShowcase from './components/CampusShowcase';
 import DailyDiscipline from './components/DailyDiscipline';
+import VideoReviews from './components/VideoReviews';
 import EligibilityCalculator from './components/EligibilityCalculator';
 import TestimonialsAndFaculty from './components/TestimonialsAndFaculty';
 import ContactAndLocation from './components/ContactAndLocation';
@@ -94,6 +95,15 @@ export default function App() {
           variants={sectionVariants}
         >
           <DailyDiscipline />
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={sectionVariants}
+        >
+          <VideoReviews onOpenModal={() => setIsModalOpen(true)} />
         </motion.div>
 
         <motion.div
