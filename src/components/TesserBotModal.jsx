@@ -109,18 +109,18 @@ export default function TesserBotModal({ isOpen, onClose }) {
       <div
         style={{
           position: 'fixed',
-          bottom: '24px',
-          right: '84px',
+          bottom: '100px',
+          right: '28px',
           zIndex: 50,
-          width: '380px',
+          width: '390px',
           maxWidth: 'calc(100vw - 32px)',
           height: '560px',
-          maxHeight: 'calc(100vh - 48px)',
+          maxHeight: 'calc(100vh - 120px)',
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: '#ffffff',
           borderRadius: '24px',
-          border: '1.5px solid rgba(125, 10, 66, 0.22)',
+          border: '1.5px solid rgba(125, 10, 66, 0.25)',
           boxShadow: '0 25px 60px -10px rgba(125, 10, 66, 0.25), 0 10px 25px rgba(0, 0, 0, 0.1)',
           overflow: 'hidden',
           fontFamily: 'var(--font-body)',
@@ -141,27 +141,33 @@ export default function TesserBotModal({ isOpen, onClose }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div
               style={{
-                width: '38px',
-                height: '38px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                backgroundColor: '#ffffff',
+                padding: '6px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
               }}
             >
-              <Bot size={22} color="#ffffff" />
+              <img
+                src="/assets/tesser_symbol.png"
+                alt="Tesser Bot"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
               <span
                 style={{
                   position: 'absolute',
-                  bottom: '0',
-                  right: '0',
-                  width: '10px',
-                  height: '10px',
+                  bottom: '-2px',
+                  right: '-2px',
+                  width: '11px',
+                  height: '11px',
                   borderRadius: '50%',
                   backgroundColor: '#10b981',
-                  border: '2px solid #7d0a42',
+                  border: '2px solid #ffffff',
                 }}
               />
             </div>

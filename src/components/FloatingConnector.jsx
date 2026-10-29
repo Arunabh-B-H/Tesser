@@ -1,36 +1,35 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, MessageSquare, Bot, X, Send, Sparkles } from 'lucide-react';
 import InstagramIcon from './InstagramIcon';
+import { Phone } from 'lucide-react';
 
-export default function FloatingConnector({ onOpenBot }) {
+export default function FloatingConnector() {
   const [showPhoneTooltip, setShowPhoneTooltip] = useState(false);
 
   return (
     <>
-      {/* Floating Vertical Connector Capsule (Matching Reference Image) */}
+      {/* Floating Vertical Connector Capsule Positioned on the LEFT */}
       <aside
         aria-label="Quick Connect Dock"
         style={{
           position: 'fixed',
-          right: '24px',
+          left: '24px',
           bottom: '50%',
           transform: 'translateY(50%)',
           zIndex: 45,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          backgroundColor: '#111827', // Deep dark charcoal capsule matching reference image
-          padding: '12px 9px',
+          backgroundColor: '#111827', // Dark charcoal capsule matching reference design
+          padding: '14px 9px',
           borderRadius: '9999px',
           boxShadow: '0 20px 45px -10px rgba(0, 0, 0, 0.45), 0 0 1px 1px rgba(255, 255, 255, 0.1)',
           border: '1px solid rgba(255, 255, 255, 0.12)',
           gap: '12px',
         }}
       >
-        {/* Glowing Active Status Dot at Top (Matching Image) */}
+        {/* Glowing Active Status Beacon at Top */}
         <div
-          title="Counselors & AI Online"
+          title="Counselors Active & Online"
           style={{
             position: 'relative',
             width: '10px',
@@ -87,12 +86,12 @@ export default function FloatingConnector({ onOpenBot }) {
             <Phone size={20} strokeWidth={2} />
           </a>
 
-          {/* Quick Dual-Phone Tooltip */}
+          {/* Quick Dual-Phone Tooltip Displayed to the Right of the Left Dock */}
           {showPhoneTooltip && (
             <div
               style={{
                 position: 'absolute',
-                right: '56px',
+                left: '56px',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 backgroundColor: '#111827',
@@ -208,59 +207,11 @@ export default function FloatingConnector({ onOpenBot }) {
             e.currentTarget.style.transform = 'scale(1)';
           }}
         >
-          {/* Authentic Facebook 'f' SVG */}
+          {/* Facebook 'f' SVG */}
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
           </svg>
         </a>
-
-        {/* 5. Tesser AI Counselor Bot Trigger Button */}
-        <button
-          onClick={onOpenBot}
-          title="Chat with TESSA (CMA Admission Bot)"
-          style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '50%',
-            backgroundColor: '#7d0a42', // Solid Deep Plum accent for bot
-            color: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'all 0.25s ease',
-            boxShadow: '0 4px 14px rgba(125, 10, 66, 0.5)',
-            position: 'relative',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.15)';
-            e.currentTarget.style.backgroundColor = '#931252';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.backgroundColor = '#7d0a42';
-          }}
-        >
-          <Bot size={22} />
-          {/* Subtle "AI" badge */}
-          <span
-            style={{
-              position: 'absolute',
-              top: '-3px',
-              right: '-3px',
-              backgroundColor: '#10b981',
-              color: '#ffffff',
-              fontSize: '0.55rem',
-              fontWeight: 900,
-              padding: '1px 4px',
-              borderRadius: '9999px',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            AI
-          </span>
-        </button>
       </aside>
 
       <style>{`
@@ -277,7 +228,7 @@ export default function FloatingConnector({ onOpenBot }) {
         }
         @media (max-width: 640px) {
           aside[aria-label="Quick Connect Dock"] {
-            right: 12px;
+            left: 10px;
             bottom: 24px;
             transform: none;
             padding: 8px 6px;
