@@ -12,7 +12,7 @@ export default function TesserBotTrigger({ isOpen, onClick }) {
         className="tesser-bot-trigger-wrap"
         style={{
           position: 'fixed',
-          bottom: '28px',
+          bottom: '52px',
           right: '28px',
           zIndex: 48,
           display: 'flex',
@@ -168,7 +168,7 @@ export default function TesserBotTrigger({ isOpen, onClick }) {
         @media (max-width: 640px) {
           .tesser-bot-trigger-wrap {
             right: 14px !important;
-            bottom: 18px !important;
+            bottom: 42px !important;
             gap: 0 !important;
           }
           .tesser-bot-trigger-tooltip {

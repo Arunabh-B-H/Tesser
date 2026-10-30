@@ -13,11 +13,11 @@ export default function TesserLogo({
   symbolOnly = false 
 }) {
   const dimensions = {
-    sm: { symbol: 34, fontMain: '1.2rem', fontTag: '0.48rem', gap: '9px' },
-    md: { symbol: 44, fontMain: '1.5rem', fontTag: '0.58rem', gap: '11px' },
-    lg: { symbol: 62, fontMain: '2.1rem', fontTag: '0.72rem', gap: '14px' },
-    hero: { symbol: 90, fontMain: '3.1rem', fontTag: '0.92rem', gap: '18px' },
-  }[size] || { symbol: 44, fontMain: '1.5rem', fontTag: '0.58rem', gap: '11px' };
+    sm: { symbol: 44, fontMain: '1.42rem', fontTag: '0.54rem', gap: '12px' },
+    md: { symbol: 52, fontMain: '1.68rem', fontTag: '0.62rem', gap: '14px' },
+    lg: { symbol: 68, fontMain: '2.25rem', fontTag: '0.78rem', gap: '16px' },
+    hero: { symbol: 96, fontMain: '3.2rem', fontTag: '0.96rem', gap: '20px' },
+  }[size] || { symbol: 48, fontMain: '1.5rem', fontTag: '0.58rem', gap: '12px' };
 
   return (
     <div 

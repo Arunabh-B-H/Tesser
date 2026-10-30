@@ -109,7 +109,7 @@ export default function TesserBotModal({ isOpen, onClose }) {
       <div
         style={{
           position: 'fixed',
-          bottom: '100px',
+          bottom: '118px',
           right: '28px',
           zIndex: 50,
           width: '390px',
