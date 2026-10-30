@@ -79,16 +79,16 @@ export default function Programs({ onOpenModal }) {
   const current = programs[selectedDimension];
 
   return (
-    <section id="programs" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
-      <div className="container-max" style={{ position: 'relative', zIndex: 10 }}>
+    <section id="programs" style={{ padding: '24px 0 20px 0', scrollMarginTop: '80px', backgroundColor: 'transparent', position: 'relative' }}>
+      <div className="container-max" style={{ maxWidth: 1100, padding: '0 20px', position: 'relative', zIndex: 10 }}>
         {/* Section Header */}
-        <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 50px auto' }}>
-          <span className="section-tag">CURRICULUM ARCHITECTURE</span>
-          <h2 className="section-title">
+        <div style={{ textAlign: 'center', maxWidth: 680, margin: '0 auto 12px auto' }}>
+          <span className="section-tag" style={{ marginBottom: 5, fontSize: '0.70rem', padding: '2px 10px' }}>CURRICULUM ARCHITECTURE</span>
+          <h2 className="section-title" style={{ fontSize: 'clamp(1.45rem, 2vw, 1.85rem)', lineHeight: 1.15, marginBottom: 5 }}>
             The Three Dimensions of <br />
             <span className="gradient-text-plum">CMA Certification.</span>
           </h2>
-          <p className="section-desc" style={{ margin: '0 auto' }}>
+          <p className="section-desc" style={{ margin: '0 auto', fontSize: '0.82rem', lineHeight: 1.4, maxWidth: 590 }}>
             Tailored learning pathways designed around the latest ICMAI syllabus. Choose your entry level and experience specialized academic coaching in Attingal.
           </p>
         </div>
@@ -98,8 +98,8 @@ export default function Programs({ onOpenModal }) {
           style={{
             display: 'flex',
             justifyContent: 'center',
-            gap: 12,
-            marginBottom: 44,
+            gap: 10,
+            marginBottom: 14,
             flexWrap: 'wrap',
           }}
         >
@@ -116,24 +116,24 @@ export default function Programs({ onOpenModal }) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 10,
-                  padding: '14px 28px',
-                  borderRadius: 14,
+                  gap: 8,
+                  padding: '7px 16px',
+                  borderRadius: 10,
                   fontFamily: 'var(--font-display)',
-                  fontSize: '0.96rem',
+                  fontSize: '0.84rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   transition: 'all 0.25s ease',
-                  border: isSelected ? '1px solid #7d0a42' : '1px solid #e2e8f0',
+                  border: isSelected ? '1.5px solid #7d0a42' : '1.5px solid #e2e8f0',
                   background: isSelected ? 'linear-gradient(135deg, #931252, #7d0a42)' : '#ffffff',
                   color: isSelected ? '#ffffff' : '#475569',
-                  boxShadow: isSelected ? '0 8px 24px -4px rgba(125, 10, 66, 0.35)' : '0 2px 6px rgba(15, 23, 42, 0.04)',
+                  boxShadow: isSelected ? '0 6px 18px -3px rgba(125, 10, 66, 0.3)' : '0 2px 5px rgba(15, 23, 42, 0.04)',
                 }}
               >
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.74rem',
+                    fontSize: '0.66rem',
                     color: isSelected ? '#fce7f1' : '#94a3b8',
                     fontWeight: 700,
                   }}
@@ -144,10 +144,10 @@ export default function Programs({ onOpenModal }) {
                 {item.badge && (
                   <span
                     style={{
-                      fontSize: '0.64rem',
+                      fontSize: '0.58rem',
                       background: isSelected ? '#ffffff' : '#7d0a42',
                       color: isSelected ? '#7d0a42' : '#ffffff',
-                      padding: '2px 8px',
+                      padding: '1px 6px',
                       borderRadius: 9999,
                       fontWeight: 800,
                     }}
@@ -164,19 +164,19 @@ export default function Programs({ onOpenModal }) {
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedDimension}
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.35 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
             className="programs-showcase-card"
             style={{
-              maxWidth: 1060,
+              maxWidth: 1040,
               margin: '0 auto',
-              padding: '42px 36px',
+              padding: '18px 22px',
               background: '#ffffff',
-              borderRadius: 24,
-              border: '1px solid rgba(125, 10, 66, 0.2)',
-              boxShadow: '0 16px 45px -8px rgba(125, 10, 66, 0.1)',
+              borderRadius: 18,
+              border: '2px solid rgba(125, 10, 66, 0.32)',
+              boxShadow: '0 10px 25px -4px rgba(125, 10, 66, 0.08)',
             }}
           >
             <div
@@ -184,107 +184,111 @@ export default function Programs({ onOpenModal }) {
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: 40,
-                alignItems: 'center',
+                gap: 20,
+                alignItems: 'stretch',
               }}
             >
               {/* Left Column: Details & Papers */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <span
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.70rem',
+                        fontWeight: 800,
+                        color: '#7d0a42',
+                        letterSpacing: '0.08em',
+                      }}
+                    >
+                      {current.dimension}
+                    </span>
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        fontSize: '0.66rem',
+                        fontWeight: 700,
+                        color: '#b45309',
+                        background: '#fef3c7',
+                        padding: '2px 8px',
+                        borderRadius: 9999,
+                        fontFamily: 'var(--font-mono)',
+                      }}
+                    >
+                      <Clock size={11} />
+                      <span>{current.duration}</span>
+                    </div>
+                  </div>
+
+                  <h3
                     style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 800,
-                      color: '#7d0a42',
-                      letterSpacing: '0.1em',
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.35rem',
+                      fontWeight: 900,
+                      color: '#0f172a',
+                      marginBottom: 2,
+                      letterSpacing: '-0.01em',
                     }}
                   >
-                    {current.dimension}
-                  </span>
+                    {current.title}
+                  </h3>
+
+                  <p style={{ color: '#334155', fontSize: '0.80rem', marginBottom: 10, lineHeight: 1.35 }}>
+                    {current.subtitle}
+                  </p>
+
+                  {/* Eligibility Notice */}
                   <div
                     style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 5,
-                      fontSize: '0.74rem',
-                      fontWeight: 700,
-                      color: '#b45309',
-                      background: '#fef3c7',
-                      padding: '3px 10px',
-                      borderRadius: 9999,
-                      fontFamily: 'var(--font-mono)',
+                      background: '#fdf2f7',
+                      border: '1px solid rgba(125, 10, 66, 0.18)',
+                      borderLeft: `3.5px solid ${current.accentColor}`,
+                      padding: '7px 12px',
+                      borderRadius: '0 8px 8px 0',
+                      marginBottom: 10,
                     }}
                   >
-                    <Clock size={12} />
-                    <span>{current.duration}</span>
+                    <div style={{ fontSize: '0.66rem', color: '#7d0a42', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                      Eligibility Criteria
+                    </div>
+                    <div style={{ fontSize: '0.80rem', fontWeight: 700, color: '#0f172a', marginTop: 1 }}>
+                      {current.eligibility}
+                    </div>
                   </div>
-                </div>
 
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '2rem',
-                    fontWeight: 900,
-                    color: '#0f172a',
-                    marginBottom: 8,
-                  }}
-                >
-                  {current.title}
-                </h3>
-
-                <p style={{ color: '#334155', fontSize: '0.96rem', marginBottom: 22, lineHeight: 1.55 }}>
-                  {current.subtitle}
-                </p>
-
-                {/* Eligibility Notice */}
-                <div
-                  style={{
-                    background: '#fdf2f7',
-                    borderLeft: `4px solid ${current.accentColor}`,
-                    padding: '12px 18px',
-                    borderRadius: '0 10px 10px 0',
-                    marginBottom: 26,
-                  }}
-                >
-                  <div style={{ fontSize: '0.76rem', color: '#7d0a42', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                    Eligibility Criteria
-                  </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#0f172a', marginTop: 2 }}>
-                    {current.eligibility}
-                  </div>
-                </div>
-
-                {/* Core Papers Covered */}
-                <div style={{ marginBottom: 26 }}>
-                  <h4 style={{ fontSize: '0.82rem', color: '#64748b', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 700, marginBottom: 12 }}>
-                    Core ICMAI Modules Covered
-                  </h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                    {current.papers.map((paper, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 10,
-                          fontSize: '0.88rem',
-                          color: '#1e293b',
-                          fontWeight: 500,
-                        }}
-                      >
-                        <span
+                  {/* Core Papers Covered */}
+                  <div>
+                    <h4 style={{ fontSize: '0.68rem', color: '#64748b', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', fontWeight: 700, marginBottom: 5 }}>
+                      Core ICMAI Modules Covered
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      {current.papers.map((paper, idx) => (
+                        <div
+                          key={idx}
                           style={{
-                            width: 7,
-                            height: 7,
-                            borderRadius: '50%',
-                            backgroundColor: current.accentColor,
-                            flexShrink: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            fontSize: '0.78rem',
+                            color: '#1e293b',
+                            fontWeight: 500,
                           }}
-                        />
-                        <span>{paper}</span>
-                      </div>
-                    ))}
+                        >
+                          <span
+                            style={{
+                              width: 5,
+                              height: 5,
+                              borderRadius: '50%',
+                              backgroundColor: current.accentColor,
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span>{paper}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -293,67 +297,72 @@ export default function Programs({ onOpenModal }) {
               <div
                 style={{
                   background: '#faf8f9',
-                  border: '1px solid rgba(125, 10, 66, 0.15)',
-                  borderRadius: 20,
-                  padding: '32px 28px',
+                  border: '1.5px solid rgba(125, 10, 66, 0.25)',
+                  borderRadius: 16,
+                  padding: '14px 16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                 }}
               >
-                <h4
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.18rem',
-                    fontWeight: 800,
-                    color: '#0f172a',
-                    marginBottom: 18,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                  }}
-                >
-                  <Star size={18} style={{ color: '#d97706' }} />
-                  The Tesser Dimension Advantage
-                </h4>
+                <div>
+                  <h4
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '0.98rem',
+                      fontWeight: 800,
+                      color: '#0f172a',
+                      marginBottom: 8,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <Star size={15} style={{ color: '#d97706' }} />
+                    The Tesser Dimension Advantage
+                  </h4>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 28 }}>
-                  {current.features.map((feat, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <CheckCircle size={18} style={{ color: '#16a34a', flexShrink: 0, marginTop: 2 }} />
-                      <span style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.5, fontWeight: 500 }}>
-                        {feat}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div
-                  style={{
-                    padding: '14px 18px',
-                    borderRadius: 12,
-                    background: '#ffffff',
-                    border: '1px solid rgba(125, 10, 66, 0.2)',
-                    marginBottom: 24,
-                  }}
-                >
-                  <div style={{ fontSize: '0.78rem', color: '#7d0a42', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>
-                    CAREER TRAJECTORY
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
+                    {current.features.map((feat, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                        <CheckCircle size={14} style={{ color: '#16a34a', flexShrink: 0, marginTop: 2 }} />
+                        <span style={{ fontSize: '0.76rem', color: '#334155', lineHeight: 1.3, fontWeight: 500 }}>
+                          {feat}
+                        </span>
+                      </div>
+                    ))}
                   </div>
-                  <div style={{ fontSize: '0.86rem', color: '#0f172a', fontWeight: 600, marginTop: 4, lineHeight: 1.45 }}>
-                    {current.careerNote}
+
+                  <div
+                    style={{
+                      padding: '7px 11px',
+                      borderRadius: 8,
+                      background: '#ffffff',
+                      border: '1px solid rgba(125, 10, 66, 0.18)',
+                      marginBottom: 10,
+                    }}
+                  >
+                    <div style={{ fontSize: '0.66rem', color: '#7d0a42', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>
+                      CAREER TRAJECTORY
+                    </div>
+                    <div style={{ fontSize: '0.76rem', color: '#0f172a', fontWeight: 600, marginTop: 2, lineHeight: 1.3 }}>
+                      {current.careerNote}
+                    </div>
                   </div>
                 </div>
 
                 {/* Direct Action Buttons */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <button
                     onClick={() => {
                       sound.playClick();
                       if (onOpenModal) onOpenModal();
                     }}
-                    className="btn-primary-plum"
-                    style={{ width: '100%', justifyContent: 'center' }}
+                    className="btn-primary-plum shimmer-sweep"
+                    style={{ width: '100%', justifyContent: 'center', padding: '8px 14px', fontSize: '0.82rem', borderRadius: 9 }}
                   >
                     <span>Enroll In {current.title}</span>
-                    <ArrowRight size={16} />
+                    <ArrowRight size={14} />
                   </button>
 
                   <a
@@ -362,9 +371,9 @@ export default function Programs({ onOpenModal }) {
                     rel="noopener noreferrer"
                     onClick={() => sound.playClick()}
                     className="btn-secondary-charcoal"
-                    style={{ width: '100%', justifyContent: 'center', fontSize: '0.88rem' }}
+                    style={{ width: '100%', justifyContent: 'center', padding: '7px 12px', fontSize: '0.76rem', borderRadius: 9 }}
                   >
-                    <Download size={15} />
+                    <Download size={13} />
                     <span>Download Syllabus Blueprint (WhatsApp)</span>
                   </a>
                 </div>
