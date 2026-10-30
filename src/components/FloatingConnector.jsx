@@ -59,6 +59,7 @@ export default function FloatingConnector() {
           <a
             href="tel:9567115221"
             title="Call Tesser Institute (+91 9567115221)"
+            className="floating-dock-btn"
             style={{
               width: '44px',
               height: '44px',
@@ -118,6 +119,7 @@ export default function FloatingConnector() {
           target="_blank"
           rel="noopener noreferrer"
           title="Chat on WhatsApp (+91 9567115221)"
+          className="floating-dock-btn"
           style={{
             width: '44px',
             height: '44px',
@@ -154,6 +156,7 @@ export default function FloatingConnector() {
           target="_blank"
           rel="noopener noreferrer"
           title="Follow on Instagram (@tesser_official)"
+          className="floating-dock-btn"
           style={{
             width: '44px',
             height: '44px',
@@ -185,6 +188,7 @@ export default function FloatingConnector() {
           target="_blank"
           rel="noopener noreferrer"
           title="Connect on Facebook"
+          className="floating-dock-btn"
           style={{
             width: '44px',
             height: '44px',
@@ -228,11 +232,19 @@ export default function FloatingConnector() {
         }
         @media (max-width: 640px) {
           aside[aria-label="Quick Connect Dock"] {
-            left: 10px;
-            bottom: 24px;
-            transform: none;
-            padding: 8px 6px;
-            gap: 8px;
+            left: 12px !important;
+            bottom: 18px !important;
+            transform: none !important;
+            padding: 7px 5px !important;
+            gap: 7px !important;
+          }
+          .floating-dock-btn {
+            width: 36px !important;
+            height: 36px !important;
+          }
+          .floating-dock-btn svg {
+            width: 17px !important;
+            height: 17px !important;
           }
         }
       `}</style>

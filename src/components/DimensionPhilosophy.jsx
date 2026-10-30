@@ -42,7 +42,7 @@ export default function DimensionPhilosophy() {
   ];
 
   return (
-    <section id="philosophy" style={{ padding: '100px 0', backgroundColor: '#faf8f9', position: 'relative' }}>
+    <section id="philosophy" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
       <div className="container-max">
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 60px auto' }}>

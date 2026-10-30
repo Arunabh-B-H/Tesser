@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Phone } from 'lucide-react';
 import TesserLogo from './TesserLogo';
+import { sound } from '../utils/sound';
 
 export default function Navbar({ onOpenModal }) {
   const [scrolled, setScrolled] = useState(false);
@@ -9,7 +10,7 @@ export default function Navbar({ onOpenModal }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 25);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -19,9 +20,10 @@ export default function Navbar({ onOpenModal }) {
   const navLinks = [
     { name: 'Why CMA', href: '#philosophy' },
     { name: 'Founders', href: '#founders' },
+    { name: 'Toppers', href: '#toppers' },
     { name: 'Programs', href: '#programs' },
-    { name: 'Campus & Hostels', href: '#campus' },
-    { name: 'Video Reviews', href: '#videos' },
+    { name: 'Campus', href: '#campus' },
+    { name: 'Reviews', href: '#reviews' },
     { name: 'Eligibility', href: '#calculator' },
     { name: 'Contact', href: '#contact' },
   ];
@@ -29,15 +31,16 @@ export default function Navbar({ onOpenModal }) {
   return (
     <>
       <header
+        className="navbar-header"
         style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
           zIndex: 40,
-          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-          padding: scrolled ? '10px 32px' : '16px 32px',
-          background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.88)',
+          transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          padding: scrolled ? '8px 24px' : '12px 24px',
+          background: scrolled ? 'rgba(255, 255, 255, 0.94)' : 'rgba(255, 255, 255, 0.84)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: scrolled ? '1px solid rgba(125, 10, 66, 0.12)' : '1px solid rgba(125, 10, 66, 0.06)',
@@ -50,26 +53,27 @@ export default function Navbar({ onOpenModal }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            maxWidth: 1280,
+            maxWidth: 1240,
             margin: '0 auto',
             width: '100%',
           }}
         >
-          {/* Logo on Left */}
+          {/* Logo on Left - Proportioned cleanly */}
           <a 
             href="#" 
+            onClick={() => sound.playClick()}
             style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           >
-            <TesserLogo size="md" showTagline={true} />
+            <TesserLogo size="sm" showTagline={true} />
           </a>
 
-          {/* Desktop Navigation - Centered, Single-line, No Wrapping */}
+          {/* Desktop Navigation - Centered, Spacious, Single-line, No Wrapping */}
           <nav 
             className="hidden-mobile"
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 20,
+              gap: 22,
               whiteSpace: 'nowrap',
             }}
           >
@@ -77,23 +81,24 @@ export default function Navbar({ onOpenModal }) {
               <a
                 key={link.name}
                 href={link.href}
+                onClick={() => sound.playClick()}
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '0.92rem',
+                  fontSize: '0.84rem',
                   fontWeight: 600,
-                  color: '#334155',
+                  color: '#475569',
                   textDecoration: 'none',
                   transition: 'color 0.2s ease',
                   letterSpacing: '0.01em',
                   whiteSpace: 'nowrap',
-                  padding: '6px 2px',
+                  padding: '5px 2px',
                   position: 'relative',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = '#7d0a42';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#334155';
+                  e.currentTarget.style.color = '#475569';
                 }}
               >
                 {link.name}
@@ -101,63 +106,30 @@ export default function Navbar({ onOpenModal }) {
             ))}
           </nav>
 
-          {/* Right Action Controls - Minimalist & Balanced */}
+          {/* Right Action Controls - Pure CTA without cluttered phone number */}
           <div 
             style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              gap: 16,
+              gap: 12,
               flexShrink: 0,
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
             }}
           >
-            {/* Direct Phone Hotline Link */}
-            <a
-              href="tel:9567115221"
-              className="hidden-mobile"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                color: '#1e293b',
-                textDecoration: 'none',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                padding: '8px 14px',
-                borderRadius: 10,
-                border: '1px solid rgba(125, 10, 66, 0.15)',
-                background: '#ffffff',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#7d0a42';
-                e.currentTarget.style.color = '#7d0a42';
-                e.currentTarget.style.background = '#fdf2f7';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(125, 10, 66, 0.15)';
-                e.currentTarget.style.color = '#1e293b';
-                e.currentTarget.style.background = '#ffffff';
-              }}
-            >
-              <Phone size={13} style={{ color: '#7d0a42' }} />
-              <span>9567115221</span>
-            </a>
-
             {/* Clean Primary CTA Button */}
             <button
               onClick={() => {
+                sound.playClick();
                 if (onOpenModal) onOpenModal();
               }}
-              className="btn-primary-plum shimmer-sweep"
+              className="btn-primary-plum shimmer-sweep nav-cta-desktop"
               style={{
-                padding: '9px 20px',
-                fontSize: '0.88rem',
+                padding: '8px 18px',
+                fontSize: '0.84rem',
                 fontWeight: 700,
                 borderRadius: 10,
                 whiteSpace: 'nowrap',
+                boxShadow: '0 6px 18px -2px rgba(125, 10, 66, 0.3)',
               }}
             >
               <span>Admissions Open</span>
@@ -165,7 +137,10 @@ export default function Navbar({ onOpenModal }) {
 
             {/* Mobile Hamburger Button */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                sound.playClick();
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
               className="mobile-toggle-btn"
               aria-label="Toggle navigation"
               style={{
@@ -173,7 +148,7 @@ export default function Navbar({ onOpenModal }) {
                 background: '#fdf2f7',
                 border: '1px solid rgba(125, 10, 66, 0.2)',
                 color: '#7d0a42',
-                padding: 7,
+                padding: 6,
                 borderRadius: 8,
                 cursor: 'pointer',
               }}
@@ -191,29 +166,32 @@ export default function Navbar({ onOpenModal }) {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.22 }}
+            transition={{ duration: 0.2 }}
             style={{
               position: 'fixed',
-              top: 72,
-              left: 16,
-              right: 16,
+              top: 64,
+              left: 14,
+              right: 14,
               zIndex: 39,
               background: '#ffffff',
-              border: '1px solid rgba(125, 10, 66, 0.22)',
+              border: '1.5px solid rgba(125, 10, 66, 0.22)',
               borderRadius: 18,
-              padding: '24px 20px',
-              boxShadow: '0 20px 50px rgba(125, 10, 66, 0.15)',
+              padding: '22px 18px',
+              boxShadow: '0 20px 50px rgba(125, 10, 66, 0.16)',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => {
+                    sound.playClick();
+                    setMobileMenuOpen(false);
+                  }}
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.05rem',
+                    fontSize: '1rem',
                     fontWeight: 700,
                     color: '#0f172a',
                     textDecoration: 'none',
@@ -225,7 +203,7 @@ export default function Navbar({ onOpenModal }) {
                 </a>
               ))}
 
-              <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <a
                   href="tel:9567115221"
                   style={{
@@ -233,30 +211,31 @@ export default function Navbar({ onOpenModal }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 8,
-                    padding: '12px',
+                    padding: '11px',
                     borderRadius: 10,
                     background: '#fdf2f7',
                     color: '#7d0a42',
                     textDecoration: 'none',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.92rem',
+                    fontSize: '0.88rem',
                     fontWeight: 800,
                   }}
                 >
-                  <Phone size={15} style={{ color: '#7d0a42' }} />
-                  Call: 9567115221 / 7902434312
+                  <Phone size={14} style={{ color: '#7d0a42' }} />
+                  Call: 95671 15221 / 79024 34312
                 </a>
 
                 <button
                   onClick={() => {
+                    sound.playClick();
                     setMobileMenuOpen(false);
                     if (onOpenModal) onOpenModal();
                   }}
                   className="btn-primary-plum"
-                  style={{ width: '100%', justifyContent: 'center' }}
+                  style={{ width: '100%', justifyContent: 'center', padding: '12px' }}
                 >
                   <span>Apply for 2025-26 Batch</span>
-                  <ArrowUpRight size={16} />
+                  <ArrowUpRight size={15} />
                 </button>
               </div>
             </div>
@@ -271,6 +250,14 @@ export default function Navbar({ onOpenModal }) {
           }
           .mobile-toggle-btn {
             display: flex !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .navbar-header {
+            padding: 8px 14px !important;
+          }
+          .nav-cta-desktop {
+            display: none !important;
           }
         }
       `}</style>

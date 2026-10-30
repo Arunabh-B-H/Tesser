@@ -143,7 +143,7 @@ export default function VideoReviews({ onOpenModal }) {
   ];
 
   return (
-    <section id="videos" style={{ padding: '100px 0', backgroundColor: '#ffffff', position: 'relative' }}>
+    <section id="videos" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
       <div className="container-max" style={{ position: 'relative', zIndex: 10 }}>
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto 50px auto' }}>
@@ -207,6 +207,7 @@ export default function VideoReviews({ onOpenModal }) {
         {/* Video Grid */}
         <motion.div
           layout
+          className="video-reviews-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(330px, 1fr))',
@@ -869,6 +870,12 @@ export default function VideoReviews({ onOpenModal }) {
         }
         .play-btn-pulse {
           animation: playPulse 2.4s infinite;
+        }
+        @media (max-width: 640px) {
+          .video-reviews-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+          }
         }
       `}</style>
     </section>

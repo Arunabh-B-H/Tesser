@@ -79,7 +79,7 @@ export default function Programs({ onOpenModal }) {
   const current = programs[selectedDimension];
 
   return (
-    <section id="programs" style={{ padding: '100px 0', backgroundColor: '#ffffff', position: 'relative' }}>
+    <section id="programs" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
       <div className="container-max" style={{ position: 'relative', zIndex: 10 }}>
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 50px auto' }}>
@@ -112,6 +112,7 @@ export default function Programs({ onOpenModal }) {
                   sound.playClick();
                   setSelectedDimension(key);
                 }}
+                className="programs-tab-btn"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -167,6 +168,7 @@ export default function Programs({ onOpenModal }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.35 }}
+            className="programs-showcase-card"
             style={{
               maxWidth: 1060,
               margin: '0 auto',
@@ -178,6 +180,7 @@ export default function Programs({ onOpenModal }) {
             }}
           >
             <div
+              className="programs-inner-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -370,6 +373,24 @@ export default function Programs({ onOpenModal }) {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .programs-showcase-card {
+            padding: 22px 16px !important;
+            border-radius: 18px !important;
+          }
+          .programs-inner-grid {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+          .programs-tab-btn {
+            padding: 9px 14px !important;
+            font-size: 0.82rem !important;
+            gap: 6px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

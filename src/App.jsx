@@ -13,6 +13,7 @@ import DailyDiscipline from './components/DailyDiscipline';
 import VideoReviews from './components/VideoReviews';
 import EligibilityCalculator from './components/EligibilityCalculator';
 import MeetFounders from './components/MeetFounders';
+import CmaToppers from './components/CmaToppers';
 import TestimonialsAndFaculty from './components/TestimonialsAndFaculty';
 import ContactAndLocation from './components/ContactAndLocation';
 import Footer from './components/Footer';
@@ -31,16 +32,17 @@ export default function App() {
   };
 
   const sectionVariants = {
-    hidden: { opacity: 0, y: 35 },
+    hidden: { opacity: 0, y: 30, filter: 'blur(4px)' },
     visible: { 
       opacity: 1, 
       y: 0,
+      filter: 'blur(0px)',
       transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] }
     }
   };
 
   return (
-    <div className="relative min-h-screen bg-white text-slate-900 overflow-x-hidden selection:bg-[#7d0a42] selection:text-white">
+    <div className="relative min-h-screen bg-transparent text-slate-900 overflow-x-hidden selection:bg-[#7d0a42] selection:text-white">
       {/* Interactive Top Reading Scroll Progress Bar */}
       <ScrollProgress />
 
@@ -61,7 +63,7 @@ export default function App() {
 
       {/* Main Content Sections with Scroll In-View Reveal Transitions */}
       <main className="relative z-10">
-        <Hero onOpenModal={() => setIsModalOpen(true)} />
+        <Hero onOpenModal={() => setIsModalOpen(true)} isReady={!showPreloader} />
 
         <motion.div
           initial="hidden"
@@ -72,11 +74,35 @@ export default function App() {
           <DimensionPhilosophy />
         </motion.div>
 
-        {/* Pinned Scroll-Driven Visionary Leadership Showcase: Abhinav & Ajmal */}
-        <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
+        {/* Visionary Leadership Showcase: Abhinav & Ajmal - Slides in from side */}
+        <motion.div
+          initial={{ opacity: 0, x: -70 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
+        </motion.div>
 
-        {/* AIAF / Dribbble-grade Pinned 3D Interactive Dimensional Scroll Journey */}
-        <DimensionalScroll3D onOpenModal={() => setIsModalOpen(true)} />
+        {/* 3D Interactive Dimensional Journey - Slides in from side (Desktop only) */}
+        <motion.div
+          initial={{ opacity: 0, x: 70 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <DimensionalScroll3D onOpenModal={() => setIsModalOpen(true)} />
+        </motion.div>
+
+        {/* CMA National Rank Holders & Toppers Showcase (Inspired by Reference Screenshot) */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={sectionVariants}
+        >
+          <CmaToppers onOpenModal={() => setIsModalOpen(true)} />
+        </motion.div>
 
         <motion.div
           initial="hidden"

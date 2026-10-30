@@ -64,7 +64,7 @@ export default function EligibilityCalculator({ onOpenModal }) {
   const rec = getRecommendation();
 
   return (
-    <section id="calculator" style={{ padding: '100px 0', backgroundColor: '#faf8f9', position: 'relative' }}>
+    <section id="calculator" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
       <div className="container-max">
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 50px auto' }}>
@@ -80,6 +80,7 @@ export default function EligibilityCalculator({ onOpenModal }) {
 
         {/* Interactive Calculator Container */}
         <div
+          className="calc-card"
           style={{
             maxWidth: 960,
             margin: '0 auto',
@@ -331,6 +332,15 @@ export default function EligibilityCalculator({ onOpenModal }) {
           </AnimatePresence>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .calc-card {
+            padding: 22px 16px !important;
+            border-radius: 18px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

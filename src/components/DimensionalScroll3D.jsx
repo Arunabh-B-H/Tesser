@@ -9,35 +9,25 @@ export default function DimensionalScroll3D({ onOpenModal }) {
   const canvasRef = useRef(null);
   const [activeStage, setActiveStage] = useState(0); // 0: Foundation, 1: Intermediate, 2: Final
 
-  // Scroll Progress Tracking across the tall pinned container (350vh)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
+  // Detect small screens (≤ 1024px) - completely remove dimensions component on small screens
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 1024;
+    }
+    return false;
   });
 
-  // Silky spring physics for scroll scrub
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 24,
-    restDelta: 0.001,
-  });
-
-  // Track active stage based on scroll
   useEffect(() => {
-    return smoothProgress.on('change', (v) => {
-      if (v < 0.35) {
-        setActiveStage(0);
-      } else if (v < 0.7) {
-        setActiveStage(1);
-      } else {
-        setActiveStage(2);
-      }
-    });
-  }, [smoothProgress]);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  // Three.js WebGL 3D Interactive Tesseract & Hyper-Prism Engine
+  // Three.js WebGL 3D Interactive Tesseract & Hyper-Prism Engine (Desktop only)
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (isMobile || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const width = canvas.clientWidth || 600;
@@ -212,42 +202,40 @@ export default function DimensionalScroll3D({ onOpenModal }) {
       animationFrameId = requestAnimationFrame(animate);
 
       const elapsed = clock.getElapsedTime();
-      const scrollVal = smoothProgress.get() || 0;
+      const stageVal = activeStage / 2;
 
       // Mouse Lerp Damping
       mouseX += (targetMouseX - mouseX) * 0.06;
       mouseY += (targetMouseY - mouseY) * 0.06;
 
-      // Primary Scroll-Driven 4D Transformation (Alex Bender style scrub)
-      // Rotates across 720 degrees on Y, 360 degrees on X as user scrolls
-      masterGroup.rotation.y = scrollVal * Math.PI * 4 + mouseX * 0.5 + elapsed * 0.15;
-      masterGroup.rotation.x = Math.sin(scrollVal * Math.PI * 2) * 0.6 + mouseY * 0.5;
-      masterGroup.rotation.z = Math.cos(scrollVal * Math.PI) * 0.35;
+      // Primary 4D Transformation & Continuous Rotation
+      masterGroup.rotation.y = elapsed * 0.35 + mouseX * 0.5 + stageVal * Math.PI;
+      masterGroup.rotation.x = Math.sin(elapsed * 0.5) * 0.3 + mouseY * 0.5;
+      masterGroup.rotation.z = Math.cos(elapsed * 0.4) * 0.2;
 
       // Morphing Inner Core based on Dimension Stage
-      innerCore.rotation.x = -elapsed * 0.4 - scrollVal * Math.PI * 3;
-      innerCore.rotation.y = elapsed * 0.5 + scrollVal * Math.PI * 3;
+      innerCore.rotation.x = -elapsed * 0.5;
+      innerCore.rotation.y = elapsed * 0.6;
 
-      // Dimensional Expansion / Explosion on Scroll
-      // Stage 1: Compact; Stage 2: Expanded; Stage 3: Hyper-Expanded
-      const expansion = 1 + scrollVal * 0.45;
+      // Dimensional Expansion based on Stage
+      const expansion = 1 + stageVal * 0.4;
       outerWireframe.scale.set(expansion, expansion, expansion);
 
       // Inner core breathing scale
-      const innerScale = 1.0 + Math.sin(elapsed * 2) * 0.06 + scrollVal * 0.35;
+      const innerScale = 1.0 + Math.sin(elapsed * 2) * 0.06 + stageVal * 0.25;
       innerCore.scale.set(innerScale, innerScale, innerScale);
 
       // Dynamic vertex breathing
       vertexSpheres.forEach((sp, idx) => {
         const c = corners[idx];
-        const push = 1 + Math.sin(elapsed * 3 + idx) * 0.05 + scrollVal * 0.45;
+        const push = 1 + Math.sin(elapsed * 3 + idx) * 0.05 + stageVal * 0.35;
         sp.position.set(c[0] * push, c[1] * push, c[2] * push);
       });
 
       // Update 4D Ray Lines connecting to outer corners
       rayLines.forEach((line, idx) => {
         const c = corners[idx];
-        const push = 1 + Math.sin(elapsed * 3 + idx) * 0.05 + scrollVal * 0.45;
+        const push = 1 + Math.sin(elapsed * 3 + idx) * 0.05 + stageVal * 0.35;
         const positions = line.geometry.attributes.position.array;
         positions[0] = c[0] * push;
         positions[1] = c[1] * push;
@@ -256,7 +244,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
       });
 
       // Halo Rotation
-      particleHalo.rotation.y = -elapsed * 0.3 - scrollVal * Math.PI * 2;
+      particleHalo.rotation.y = -elapsed * 0.3;
       particleHalo.rotation.x = Math.sin(elapsed * 0.5) * 0.2;
 
       renderer.render(scene, camera);
@@ -274,7 +262,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
       sphereGeo.dispose();
       particleGeo.dispose();
     };
-  }, [smoothProgress]);
+  }, [activeStage, isMobile]);
 
   // Stage Data for the 3 Dimensions of CMA
   const stages = [
@@ -348,41 +336,44 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
   const currentStage = stages[activeStage];
 
-  // Quick navigation clicks for the stages
-  const scrollToStage = (stageIndex) => {
+  // Direct tab selection for dimensions with sound & physics transition
+  const selectStage = (stageIndex) => {
     sound.playClick();
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const containerTop = rect.top + scrollTop;
-    const totalHeight = rect.height - window.innerHeight;
-    const targetScroll = containerTop + (stageIndex / 2) * totalHeight;
-    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    setActiveStage(stageIndex);
   };
+
+  // Remove completely on small screens (mobile & tablet) as requested
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <section
       ref={containerRef}
       id="dimension-scroll"
+      className="dimensional-scroll-section"
       style={{
         position: 'relative',
-        height: '350vh', // 3.5x viewport height for smooth scrubbed scroll
-        backgroundColor: '#ffffff',
+        minHeight: '100vh',
+        backgroundColor: 'transparent',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '110px 0 60px 0',
+        overflow: 'hidden',
       }}
     >
-      {/* Sticky 100vh Viewport Container */}
+      {/* Viewport Container */}
       <div
+        className="dimensional-sticky-wrap"
         style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
+          position: 'relative',
           width: '100%',
-          height: '100vh',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'transparent',
           backgroundImage:
             'radial-gradient(circle at 50% 50%, rgba(125, 10, 66, 0.04) 0%, rgba(255, 255, 255, 0) 70%)',
         }}
@@ -402,16 +393,15 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
         {/* Top Control Bar with Dimension Pill Switchers */}
         <div
+          className="dimensional-top-bar"
           style={{
-            position: 'absolute',
-            top: 86,
-            left: 0,
-            right: 0,
+            position: 'relative',
             zIndex: 30,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '0 24px',
+            marginBottom: 24,
           }}
         >
           <div
@@ -432,7 +422,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
               return (
                 <button
                   key={st.id}
-                  onClick={() => scrollToStage(idx)}
+                  onClick={() => selectStage(idx)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -472,7 +462,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
         {/* Centerpiece 3D Canvas Canvas Layout */}
         <div
-          className="container-max"
+          className="container-max dimensional-main-container"
           style={{
             position: 'relative',
             zIndex: 20,
@@ -488,6 +478,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
         >
           {/* LEFT COLUMN: Dynamic Kinetic Typography on Scroll */}
           <div
+            className="dimensional-story-col"
             style={{
               width: '37%',
               maxWidth: 430,
@@ -620,6 +611,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
           {/* CENTER 3D WEBGL TESSERACT VIEWPORT */}
           <div
+            className="dimensional-canvas-wrap"
             style={{
               position: 'absolute',
               top: '50%',
@@ -648,6 +640,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
           {/* RIGHT COLUMN: Interactive 3D Telemetry HUD Card on Scroll */}
           <div
+            className="dimensional-hud-col"
             style={{
               width: '35%',
               maxWidth: 400,
@@ -822,42 +815,56 @@ export default function DimensionalScroll3D({ onOpenModal }) {
             </AnimatePresence>
           </div>
         </div>
-
-        {/* Bottom Interactive Scroll Indicator Cue */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 30,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 6,
-            pointerEvents: 'none',
-          }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.72rem',
-              fontWeight: 800,
-              color: '#7d0a42',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Scroll to rotate 4D Hypercube // Drag cursor to tilt
-          </span>
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <ChevronDown size={18} style={{ color: '#7d0a42' }} />
-          </motion.div>
-        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .dimensional-scroll-section {
+            height: auto !important;
+            position: static !important;
+            padding: 48px 0 !important;
+          }
+          .dimensional-sticky-wrap {
+            position: static !important;
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+          }
+          .dimensional-top-bar {
+            position: relative !important;
+            top: auto !important;
+            padding: 0 16px 20px 16px !important;
+          }
+          .dimensional-main-container {
+            flex-direction: column !important;
+            height: auto !important;
+            padding: 0 16px 36px 16px !important;
+            gap: 28px !important;
+          }
+          .dimensional-canvas-wrap {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            transform: none !important;
+            width: 100% !important;
+            max-width: 320px !important;
+            height: 260px !important;
+            margin: 0 auto !important;
+          }
+          .dimensional-story-col {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          .dimensional-hud-col {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          .dimensional-scroll-hint {
+            display: none !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

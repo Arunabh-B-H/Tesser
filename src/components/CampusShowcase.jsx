@@ -51,7 +51,7 @@ export default function CampusShowcase() {
   const current = facilities[activeFacility];
 
   return (
-    <section id="campus" style={{ padding: '100px 0', backgroundColor: '#faf8f9', position: 'relative' }}>
+    <section id="campus" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
       <div className="container-max">
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 50px auto' }}>
@@ -171,6 +171,7 @@ export default function CampusShowcase() {
             }}
           >
             <div
+              className="campus-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
@@ -304,6 +305,14 @@ export default function CampusShowcase() {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .campus-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -2,26 +2,44 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { Sparkles, Quote, Award, Shield, CheckCircle2, ArrowRight, MessageSquare, ChevronDown, UserCheck } from 'lucide-react';
 import { sound } from '../utils/sound';
+import WhatsAppIcon from './WhatsAppIcon';
 
 export default function MeetFounders({ onOpenModal }) {
   const containerRef = useRef(null);
   const [activeFounder, setActiveFounder] = useState(0); // 0: Abhinav, 1: Ajmal
 
-  // Pinned scroll tracking across 240vh scroll track
+  // Detect mobile screen width (≤ 1024px)
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 1024;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Pinned scroll tracking across 240vh scroll track (Desktop)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Smooth spring physics for scrubbing
+  // Smooth spring physics for scrubbing (Desktop)
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 95,
     damping: 26,
     restDelta: 0.001,
   });
 
-  // Update active founder based on scroll threshold
+  // Update active founder based on scroll threshold (Desktop)
   useEffect(() => {
+    if (isMobile) return;
     return smoothProgress.on('change', (v) => {
       if (v < 0.5) {
         setActiveFounder(0);
@@ -29,7 +47,7 @@ export default function MeetFounders({ onOpenModal }) {
         setActiveFounder(1);
       }
     });
-  }, [smoothProgress]);
+  }, [smoothProgress, isMobile]);
 
   const founders = [
     {
@@ -78,45 +96,45 @@ export default function MeetFounders({ onOpenModal }) {
 
   const current = founders[activeFounder];
 
-  // Smooth scroll to founder
-  const scrollToFounder = (index) => {
+  // Direct founder selection with sound & silky tab transition
+  const selectFounder = (index) => {
     sound.playClick();
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const containerTop = rect.top + scrollTop;
-    const totalHeight = rect.height - window.innerHeight;
-    const targetScroll = containerTop + (index === 0 ? 0.1 : 0.85) * totalHeight;
-    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    setActiveFounder(index);
   };
 
-  return (
-    <section
-      ref={containerRef}
-      id="founders"
-      style={{
-        position: 'relative',
-        height: '240vh', // 2.4x viewport height for smooth 2-phase scroll
-        backgroundColor: '#ffffff',
-      }}
-    >
-      {/* Pinned Sticky 100vh Viewport */}
-      <div
+  // =========================================================================
+  // 1. DESKTOP VIEW (>1024px): Restored Original Luxury Showcase with Switcher Pill
+  //    - No 240vh scroll-trap or unpinned dead white gap!
+  //    - Direct instant switching between 01 Abhinav & 02 Ajmal via floating pill
+  //    - No bottom "SCROLL TO TRANSITION" cue
+  //    - Perfectly centered in luxury viewport with seamless flow into 3D section
+  // =========================================================================
+  if (!isMobile) {
+    return (
+      <section
+        id="founders"
         style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100vh',
-          overflow: 'hidden',
+          position: 'relative',
+          minHeight: '100vh',
+          backgroundColor: 'transparent',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          backgroundColor: '#ffffff',
-          backgroundImage:
-            'radial-gradient(circle at 50% 50%, rgba(125, 10, 66, 0.04) 0%, rgba(255, 255, 255, 0) 70%)',
+          padding: '110px 0 60px 0',
+          overflow: 'hidden',
         }}
       >
+        {/* Subtle Luxury Radial Vignette */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage:
+              'radial-gradient(circle at 50% 50%, rgba(125, 10, 66, 0.04) 0%, rgba(255, 255, 255, 0) 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+
         {/* Subtle Luxury Pattern Background */}
         <div
           style={{
@@ -130,7 +148,75 @@ export default function MeetFounders({ onOpenModal }) {
           }}
         />
 
-        {/* Main Content Area - Centered in 100vh Viewport */}
+        {/* Top Floating Founder Switcher Pill */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 30,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0 24px',
+            marginBottom: 28,
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: 'rgba(255, 255, 255, 0.94)',
+              border: '1.5px solid rgba(125, 10, 66, 0.18)',
+              borderRadius: 9999,
+              padding: '6px 8px',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 10px 30px rgba(125, 10, 66, 0.08)',
+            }}
+          >
+            {founders.map((f, idx) => {
+              const isSelected = activeFounder === idx;
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => selectFounder(idx)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '8px 22px',
+                    borderRadius: 9999,
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease',
+                    border: 'none',
+                    background: isSelected
+                      ? 'linear-gradient(135deg, #931252, #7d0a42)'
+                      : 'transparent',
+                    color: isSelected ? '#ffffff' : '#64748b',
+                    boxShadow: isSelected
+                      ? '0 4px 15px rgba(125, 10, 66, 0.35)'
+                      : 'none',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.74rem',
+                      opacity: isSelected ? 0.9 : 0.6,
+                    }}
+                  >
+                    0{idx + 1}
+                  </span>
+                  <span>{f.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Main Content Area */}
         <div
           className="container-max"
           style={{
@@ -139,14 +225,14 @@ export default function MeetFounders({ onOpenModal }) {
             width: '100%',
             maxWidth: 1280,
             margin: '0 auto',
-            padding: '30px 32px 30px 32px',
+            padding: '0 32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 48,
           }}
         >
-          {/* LEFT: Pinned Luxury Portrait Showcase (Morphed by Scroll) */}
+          {/* LEFT: Pinned Luxury Portrait Showcase (Morphed by Tabs) */}
           <div
             style={{
               width: '42%',
@@ -251,7 +337,8 @@ export default function MeetFounders({ onOpenModal }) {
                       right: 0,
                       padding: '26px 24px',
                       backdropFilter: 'blur(8px)',
-                      background: 'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%)',
+                      background:
+                        'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%)',
                     }}
                   >
                     <div
@@ -503,7 +590,7 @@ export default function MeetFounders({ onOpenModal }) {
                     className="btn-secondary-charcoal"
                     style={{ padding: '12px 20px', fontSize: '0.9rem' }}
                   >
-                    <MessageSquare size={15} />
+                    <WhatsAppIcon size={16} />
                     <span>WhatsApp Office</span>
                   </a>
                 </div>
@@ -511,41 +598,418 @@ export default function MeetFounders({ onOpenModal }) {
             </AnimatePresence>
           </div>
         </div>
+      </section>
+    );
+  }
 
-        {/* Bottom Interactive Scroll Hint */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 22,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 30,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 6,
-            pointerEvents: 'none',
-          }}
-        >
-          <span
+  // =========================================================================
+  // 2. MOBILE VIEW (≤1024px): Full Sequential Story Flow
+  //    User scrolls down:
+  //    1. Full Founder 1 (Abhinav) photo & complete description
+  //    2. User reaches Founder 2 (Ajmal) directly FROM THE PHOTO ITSELF!
+  //    3. Full Founder 2 (Ajmal) complete description
+  // =========================================================================
+  return (
+    <section
+      id="founders"
+      style={{
+        padding: '56px 0 64px 0',
+        backgroundColor: 'transparent',
+        position: 'relative',
+      }}
+    >
+      <div className="container-max" style={{ padding: '0 16px' }}>
+        {/* Section Header */}
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <div
+            className="badge-plum"
             style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.72rem',
-              fontWeight: 800,
-              color: '#7d0a42',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 14,
             }}
           >
-            Scroll to transition: 01 Abhinav ──► 02 Ajmal
-          </span>
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            <Sparkles size={13} />
+            <span>MEET OUR FOUNDERS // LEADERSHIP</span>
+          </div>
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(2rem, 7.5vw, 2.45rem)',
+              fontWeight: 900,
+              color: '#0f172a',
+              lineHeight: 1.15,
+              letterSpacing: '-0.025em',
+              marginBottom: 10,
+            }}
           >
-            <ChevronDown size={18} style={{ color: '#7d0a42' }} />
-          </motion.div>
+            Architects of the <br />
+            <span className="gradient-text-plum">CMA Dimension.</span>
+          </h2>
+          <p
+            style={{
+              fontSize: '0.92rem',
+              color: '#64748b',
+              lineHeight: 1.55,
+              maxWidth: 420,
+              margin: '0 auto',
+            }}
+          >
+            Direct mentorship from South Kerala’s premier CMA academicians and campus leaders in Attingal.
+          </p>
         </div>
+
+        {/* Sequential Founder Cards Flow */}
+        {founders.map((f, idx) => (
+          <div key={f.id} className="founder-mobile-block" style={{ marginBottom: idx === 0 ? 44 : 0 }}>
+            {/* Separator Pill between Founder 1 and Founder 2 */}
+            {idx === 1 && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '36px 0 28px 0',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: '50%',
+                    height: 1,
+                    background: 'linear-gradient(90deg, transparent, rgba(125, 10, 66, 0.22), transparent)',
+                  }}
+                />
+                <span
+                  style={{
+                    position: 'relative',
+                    zIndex: 2,
+                    background: '#ffffff',
+                    border: '1.5px solid rgba(125, 10, 66, 0.22)',
+                    color: '#7d0a42',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.74rem',
+                    fontWeight: 800,
+                    letterSpacing: '0.08em',
+                    padding: '5px 14px',
+                    borderRadius: 9999,
+                    boxShadow: '0 4px 14px rgba(125, 10, 66, 0.08)',
+                  }}
+                >
+                  FOUNDER 02 // OPERATIONS &amp; RESIDENCE
+                </span>
+              </div>
+            )}
+
+            {/* 1. Founder Luxury Portrait Card (User sees founder from the photo itself!) */}
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: 400,
+                margin: '0 auto 24px auto',
+                borderRadius: 24,
+                overflow: 'hidden',
+                background: '#ffffff',
+                border: '2px solid rgba(125, 10, 66, 0.24)',
+                boxShadow: '0 20px 50px -10px rgba(125, 10, 66, 0.2), 0 8px 20px rgba(15, 23, 42, 0.06)',
+              }}
+            >
+              <div style={{ position: 'relative', width: '100%', paddingTop: '125%' }}>
+                <img
+                  src={f.image}
+                  alt={f.name}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'top center',
+                  }}
+                />
+
+                {/* Gradient Scrim */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background:
+                      'linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(15, 23, 42, 0.05) 100%)',
+                  }}
+                />
+
+                {/* Top-Right Leadership Tag */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    background: 'rgba(255, 255, 255, 0.96)',
+                    color: '#7d0a42',
+                    fontSize: '0.7rem',
+                    fontFamily: 'var(--font-mono)',
+                    fontWeight: 800,
+                    padding: '4px 10px',
+                    borderRadius: 9999,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    letterSpacing: '0.04em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                  }}
+                >
+                  <UserCheck size={12} />
+                  <span>FOUNDER DIRECT</span>
+                </div>
+
+                {/* Floating Identity Banner at the base of Portrait */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    padding: '22px 20px',
+                    backdropFilter: 'blur(8px)',
+                    background:
+                      'linear-gradient(to top, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.65) 80%, transparent 100%)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      color: '#fce7f1',
+                      letterSpacing: '0.08em',
+                      marginBottom: 4,
+                    }}
+                  >
+                    {f.badge}
+                  </div>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.9rem',
+                      fontWeight: 900,
+                      color: '#ffffff',
+                      lineHeight: 1.1,
+                      marginBottom: 4,
+                    }}
+                  >
+                    {f.name}
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: '0.84rem',
+                      color: '#cbd5e1',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {f.role}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Full Founder Description, Quote, Bio, Metrics & CTAs */}
+            <div style={{ maxWidth: 440, margin: '0 auto' }}>
+              {/* Vision Tag */}
+              <div
+                style={{
+                  fontSize: '0.92rem',
+                  fontWeight: 800,
+                  color: '#7d0a42',
+                  fontFamily: 'var(--font-mono)',
+                  marginBottom: 14,
+                  lineHeight: 1.35,
+                }}
+              >
+                {f.visionTag}
+              </div>
+
+              {/* Founder's Direct Quote Box */}
+              <div
+                style={{
+                  background: '#faf8f9',
+                  border: '1.5px solid rgba(125, 10, 66, 0.16)',
+                  borderRadius: 18,
+                  padding: '20px 18px',
+                  marginBottom: 18,
+                  position: 'relative',
+                  boxShadow: '0 4px 16px rgba(125, 10, 66, 0.04)',
+                }}
+              >
+                <Quote
+                  size={32}
+                  style={{
+                    color: 'rgba(125, 10, 66, 0.12)',
+                    position: 'absolute',
+                    top: 12,
+                    right: 14,
+                  }}
+                />
+                <p
+                  style={{
+                    fontSize: '0.94rem',
+                    color: '#1e293b',
+                    lineHeight: 1.58,
+                    fontStyle: 'italic',
+                    fontWeight: 500,
+                    position: 'relative',
+                    zIndex: 2,
+                  }}
+                >
+                  "{f.quote}"
+                </p>
+              </div>
+
+              {/* Bio Summary */}
+              <p
+                style={{
+                  color: '#475569',
+                  fontSize: '0.9rem',
+                  lineHeight: 1.58,
+                  marginBottom: 18,
+                }}
+              >
+                {f.bio}
+              </p>
+
+              {/* 3 Pillars / Commitments */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                  marginBottom: 20,
+                }}
+              >
+                {f.commitments.map((c, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 10,
+                      fontSize: '0.86rem',
+                      color: '#0f172a',
+                      fontWeight: 600,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <CheckCircle2
+                      size={16}
+                      style={{ color: '#7d0a42', flexShrink: 0, marginTop: 2 }}
+                    />
+                    <span>{c}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Telemetry Metrics Bar */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 8,
+                  marginBottom: 22,
+                }}
+              >
+                {f.metrics.map((m, mIdx) => (
+                  <div
+                    key={mIdx}
+                    style={{
+                      background: '#ffffff',
+                      border: '1px solid rgba(125, 10, 66, 0.16)',
+                      padding: '10px 8px',
+                      borderRadius: 12,
+                      textAlign: 'center',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '0.92rem',
+                        fontWeight: 900,
+                        color: '#7d0a42',
+                        fontFamily: 'var(--font-display)',
+                        marginBottom: 2,
+                        lineHeight: 1.15,
+                      }}
+                    >
+                      {m.value}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.66rem',
+                        color: '#64748b',
+                        fontFamily: 'var(--font-mono)',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {m.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+                  gap: 10,
+                }}
+              >
+                <button
+                  onClick={() => {
+                    sound.playClick();
+                    if (onOpenModal) onOpenModal();
+                  }}
+                  className="btn-primary-plum shimmer-sweep"
+                  style={{
+                    width: '100%',
+                    padding: '13px 20px',
+                    fontSize: '0.92rem',
+                    justifyContent: 'center',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <span>Schedule Founder Mentorship Desk</span>
+                  <ArrowRight size={16} />
+                </button>
+
+                <a
+                  href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(f.name)}.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => sound.playClick()}
+                  className="btn-secondary-charcoal"
+                  style={{
+                    width: '100%',
+                    padding: '12px 20px',
+                    fontSize: '0.92rem',
+                    justifyContent: 'center',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <WhatsAppIcon size={18} />
+                  <span>WhatsApp Office</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

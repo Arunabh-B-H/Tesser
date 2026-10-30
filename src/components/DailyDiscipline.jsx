@@ -51,7 +51,7 @@ export default function DailyDiscipline() {
   ];
 
   return (
-    <section id="discipline" style={{ padding: '100px 0', backgroundColor: '#ffffff', position: 'relative' }}>
+    <section id="discipline" style={{ padding: '100px 0', backgroundColor: 'transparent', position: 'relative' }}>
       <div className="container-max">
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: 740, margin: '0 auto 60px auto' }}>
