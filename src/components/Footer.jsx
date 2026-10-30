@@ -223,43 +223,48 @@ export default function Footer() {
         <div
           style={{
             borderTop: '1px solid #e2e8f0',
-            paddingTop: 28,
+            paddingTop: 24,
+            paddingBottom: 28,
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 20,
+            paddingRight: 'min(280px, 24vw)', // Guarantees footer content never collides with floating AI bot
           }}
         >
-          <div style={{ color: '#64748b', fontSize: '0.84rem' }}>
-            &copy; {new Date().getFullYear()} Tesser Institute. All rights reserved. First Professional Campus Exclusively for CMA in Attingal, TVM.
+          {/* Left: Copyright & Identity Note */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ color: '#64748b', fontSize: '0.84rem' }}>
+              &copy; {new Date().getFullYear()} Tesser Institute. All rights reserved. First Professional Campus Exclusively for CMA in Attingal, TVM.
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+              Identity Theme: Luminous White &amp; Solid Deep Plum
+            </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
-              Identity Theme: Luminous White &amp; Solid Deep Plum
-            </span>
-
+          {/* Return to Top Button */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <button
               onClick={scrollToTop}
               title="Return to Top"
               style={{
-                width: 42,
-                height: 42,
-                borderRadius: '50%',
-                background: '#fdf2f7',
-                border: '1px solid rgba(125, 10, 66, 0.25)',
-                color: '#7d0a42',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                gap: 8,
+                padding: '9px 18px',
+                borderRadius: 9999,
+                background: '#fdf2f7',
+                border: '1.5px solid rgba(125, 10, 66, 0.28)',
+                color: '#7d0a42',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
+                boxShadow: '0 4px 12px rgba(125, 10, 66, 0.08)',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#7d0a42';
                 e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = '#fdf2f7';
@@ -267,7 +272,29 @@ export default function Footer() {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              <ArrowUp size={18} />
+              <div
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: '50%',
+                  background: 'rgba(125, 10, 66, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ArrowUp size={15} />
+              </div>
+              <span
+                style={{
+                  fontSize: '0.78rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                BACK TO TOP
+              </span>
             </button>
           </div>
         </div>
