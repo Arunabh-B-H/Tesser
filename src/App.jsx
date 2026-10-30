@@ -42,7 +42,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-transparent text-slate-900 overflow-x-hidden selection:bg-[#7d0a42] selection:text-white">
+    <div className="relative min-h-screen bg-transparent text-slate-900 overflow-x-clip selection:bg-[#7d0a42] selection:text-white">
       {/* Interactive Top Reading Scroll Progress Bar */}
       <ScrollProgress />
 
@@ -74,25 +74,11 @@ export default function App() {
           <DimensionPhilosophy />
         </motion.div>
 
-        {/* Visionary Leadership Showcase: Abhinav & Ajmal - Slides in from side */}
-        <motion.div
-          initial={{ opacity: 0, x: -70 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
-        </motion.div>
+        {/* Visionary Leadership Showcase: Founders Horizontal Scroll Section */}
+        <MeetFounders onOpenModal={() => setIsModalOpen(true)} />
 
-        {/* 3D Interactive Dimensional Journey - Slides in from side (Desktop only) */}
-        <motion.div
-          initial={{ opacity: 0, x: 70 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <DimensionalScroll3D onOpenModal={() => setIsModalOpen(true)} />
-        </motion.div>
+        {/* 3D Interactive Dimensional Journey (Desktop only) */}
+        <DimensionalScroll3D onOpenModal={() => setIsModalOpen(true)} />
 
         {/* CMA National Rank Holders & Toppers Showcase (Inspired by Reference Screenshot) */}
         <motion.div

@@ -1,53 +1,37 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
-import { Sparkles, Quote, Award, Shield, CheckCircle2, ArrowRight, MessageSquare, ChevronDown, UserCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Sparkles, Quote, Award, Shield, CheckCircle2, ArrowRight, MessageSquare, UserCheck } from 'lucide-react';
 import { sound } from '../utils/sound';
 import WhatsAppIcon from './WhatsAppIcon';
 
-export default function MeetFounders({ onOpenModal }) {
-  const containerRef = useRef(null);
-  const [activeFounder, setActiveFounder] = useState(0); // 0: Abhinav, 1: Ajmal
+gsap.registerPlugin(ScrollTrigger);
 
-  // Detect mobile screen width (≤ 1024px)
+export default function MeetFounders({ onOpenModal }) {
+  const sectionRef = useRef(null);
+  const stageRef = useRef(null);
+  const trackRef = useRef(null);
+  const progressBarRef = useRef(null);
+
+  const [activeFounder, setActiveFounder] = useState(0); // 0: Ajmal, 1: Abhinav
+
+  // Detect mobile screen width (< 768px)
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.innerWidth <= 1024;
+      return window.innerWidth < 768;
     }
     return false;
   });
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
+      setIsMobile(window.innerWidth < 768);
+      ScrollTrigger.refresh();
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // Pinned scroll tracking across 240vh scroll track (Desktop)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  // Smooth spring physics for scrubbing (Desktop)
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 95,
-    damping: 26,
-    restDelta: 0.001,
-  });
-
-  // Update active founder based on scroll threshold (Desktop)
-  useEffect(() => {
-    if (isMobile) return;
-    return smoothProgress.on('change', (v) => {
-      if (v < 0.5) {
-        setActiveFounder(0);
-      } else {
-        setActiveFounder(1);
-      }
-    });
-  }, [smoothProgress, isMobile]);
 
   const founders = [
     {
@@ -94,655 +78,811 @@ export default function MeetFounders({ onOpenModal }) {
     },
   ];
 
-  const current = founders[activeFounder];
+  // GSAP Vault ScrollTrigger Horizontal Section Implementation (Desktop)
+  useEffect(() => {
+    if (isMobile) return;
 
-  // Direct founder selection with sound & silky tab transition
-  const selectFounder = (index) => {
+    let ctx = gsap.context(() => {
+      const track = trackRef.current;
+      const section = sectionRef.current;
+      const stage = stageRef.current;
+      if (!track || !section || !stage) return;
+
+      const getScrollDist = () => {
+        return track.scrollWidth - window.innerWidth;
+      };
+
+      const st = ScrollTrigger.create({
+        trigger: section,
+        pin: stage,
+        start: 'top top',
+        end: () => '+=' + getScrollDist(),
+        scrub: 0.8,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const dist = getScrollDist();
+          // Horizontal panning across the track
+          gsap.set(track, { x: -self.progress * dist });
+
+          // Active founder switcher based on threshold
+          setActiveFounder(self.progress > 0.45 ? 1 : 0);
+
+          // Update bottom progress bar
+          if (progressBarRef.current) {
+            progressBarRef.current.style.transform = `scaleX(${Math.max(0.08, self.progress)})`;
+          }
+        },
+      });
+
+      // Parallax on image portraits inside the track
+      gsap.to('.founders-parallax-img-0', {
+        x: -35,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => '+=' + getScrollDist() * 0.5,
+          scrub: true,
+        },
+      });
+
+      gsap.fromTo(
+        '.founders-parallax-img-1',
+        { x: 35 },
+        {
+          x: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: section,
+            start: () => '+=' + getScrollDist() * 0.45,
+            end: () => '+=' + getScrollDist(),
+            scrub: true,
+          },
+        }
+      );
+    }, sectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, [isMobile]);
+
+  // Direct founder selection with sound & smooth scroll to target trigger point
+  const scrollToFounder = (index) => {
     sound.playClick();
     setActiveFounder(index);
+    if (!trackRef.current || !sectionRef.current) return;
+    const dist = trackRef.current.scrollWidth - window.innerWidth;
+    const targetY = sectionRef.current.offsetTop + (index === 0 ? 0 : dist);
+    window.scrollTo({
+      top: targetY,
+      behavior: 'smooth',
+    });
   };
 
   // =========================================================================
-  // 1. DESKTOP VIEW (>1024px): Restored Original Luxury Showcase with Switcher Pill
-  //    - No 240vh scroll-trap or unpinned dead white gap!
-  //    - Direct instant switching between 01 Abhinav & 02 Ajmal via floating pill
-  //    - No bottom "SCROLL TO TRANSITION" cue
-  //    - Perfectly centered in luxury viewport with seamless flow into 3D section
+  // 1. DESKTOP VIEW (≥768px): GSAP Vault Horizontal Scroll Section
+  //    - GSAP ScrollTrigger pins stage for EXACT track.scrollWidth - window.innerWidth
+  //    - Zero blank gaps, zero dead scroll, zero overshoot
+  //    - Seamless release directly into the next section
   // =========================================================================
   if (!isMobile) {
     return (
       <section
+        ref={sectionRef}
         id="founders"
+        className="founders-horizontal-container"
         style={{
           position: 'relative',
-          minHeight: '100vh',
-          backgroundColor: 'transparent',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '110px 0 60px 0',
-          overflow: 'hidden',
+          width: '100%',
+          backgroundColor: '#faf7f9',
         }}
       >
-        {/* Subtle Luxury Radial Vignette */}
+        {/* Viewport Stage Pinned by GSAP ScrollTrigger */}
         <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(circle at 50% 50%, rgba(125, 10, 66, 0.04) 0%, rgba(255, 255, 255, 0) 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Subtle Luxury Pattern Background */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(rgba(125, 10, 66, 0.08) 1px, transparent 1px)',
-            backgroundSize: '36px 36px',
-            opacity: 0.65,
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Top Floating Founder Switcher Pill */}
-        <div
+          ref={stageRef}
+          className="founders-pinned-stage"
           style={{
             position: 'relative',
-            zIndex: 30,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0 24px',
-            marginBottom: 28,
-          }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: 'rgba(255, 255, 255, 0.94)',
-              border: '1.5px solid rgba(125, 10, 66, 0.18)',
-              borderRadius: 9999,
-              padding: '6px 8px',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '0 10px 30px rgba(125, 10, 66, 0.08)',
-            }}
-          >
-            {founders.map((f, idx) => {
-              const isSelected = activeFounder === idx;
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => selectFounder(idx)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '8px 22px',
-                    borderRadius: 9999,
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '0.86rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
-                    border: 'none',
-                    background: isSelected
-                      ? 'linear-gradient(135deg, #931252, #7d0a42)'
-                      : 'transparent',
-                    color: isSelected ? '#ffffff' : '#64748b',
-                    boxShadow: isSelected
-                      ? '0 4px 15px rgba(125, 10, 66, 0.35)'
-                      : 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.74rem',
-                      opacity: isSelected ? 0.9 : 0.6,
-                    }}
-                  >
-                    0{idx + 1}
-                  </span>
-                  <span>{f.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div
-          className="container-max"
-          style={{
-            position: 'relative',
-            zIndex: 20,
             width: '100%',
-            maxWidth: 1280,
-            margin: '0 auto',
-            padding: '0 32px',
+            height: '100vh',
+            minHeight: '100vh',
+            overflow: 'hidden',
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: 'column',
             justifyContent: 'space-between',
-            gap: 48,
+            backgroundColor: '#faf7f9',
+            backgroundImage:
+              'radial-gradient(circle at 50% 50%, rgba(125, 10, 66, 0.05) 0%, rgba(255, 255, 255, 0) 70%)',
           }}
         >
-          {/* LEFT: Pinned Luxury Portrait Showcase (CSS Grid Stack Crossfade) */}
+          {/* Subtle Technical Constellation Dot Grid */}
           <div
             style={{
-              width: '42%',
-              maxWidth: 460,
-              flexShrink: 0,
+              position: 'absolute',
+              inset: 0,
+              backgroundImage:
+                'radial-gradient(rgba(125, 10, 66, 0.08) 1px, transparent 1px)',
+              backgroundSize: '36px 36px',
+              opacity: 0.65,
+              pointerEvents: 'none',
+              zIndex: 1,
+            }}
+          />
+
+          {/* Top Rail Bar (GSAP Vault rail-cue & quick switcher) */}
+          <div
+            className="founders-top-bar"
+            style={{
               position: 'relative',
+              zIndex: 30,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '20px 48px 0 48px',
             }}
           >
-            {/* Ambient Background Plum Glow */}
+            {/* GSAP Vault Arrow & Cue */}
             <div
               style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '110%',
-                height: '110%',
-                borderRadius: 32,
-                background:
-                  'radial-gradient(circle, rgba(125, 10, 66, 0.2) 0%, rgba(255, 255, 255, 0) 70%)',
-                filter: 'blur(30px)',
-                zIndex: 1,
-                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                color: '#64748b',
+                fontSize: '0.78rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
               }}
-            />
+            >
+              <div className="founders-cue-arrow" />
+              <span>KEEP SCROLLING — THE FOUNDERS JOURNEY RUNS SIDEWAYS</span>
+            </div>
 
+            {/* Direct Quick-Jump Switcher */}
             <div
               style={{
-                display: 'grid',
-                gridTemplateAreas: '"stack"',
-                position: 'relative',
-                zIndex: 2,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: 'rgba(255, 255, 255, 0.94)',
+                border: '1.5px solid rgba(125, 10, 66, 0.18)',
+                borderRadius: 9999,
+                padding: '4px 6px',
+                backdropFilter: 'blur(16px)',
+                boxShadow: '0 8px 24px rgba(125, 10, 66, 0.08)',
               }}
             >
               {founders.map((f, idx) => {
                 const isSelected = activeFounder === idx;
                 return (
-                  <motion.div
+                  <button
                     key={f.id}
-                    initial={false}
-                    animate={{
-                      opacity: isSelected ? 1 : 0,
-                      scale: isSelected ? 1 : 0.96,
-                      pointerEvents: isSelected ? 'auto' : 'none',
-                    }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    onClick={() => scrollToFounder(idx)}
                     style={{
-                      gridArea: 'stack',
-                      borderRadius: 28,
-                      overflow: 'hidden',
-                      background: '#ffffff',
-                      border: '2px solid rgba(125, 10, 66, 0.25)',
-                      boxShadow:
-                        '0 30px 70px -15px rgba(125, 10, 66, 0.2), 0 10px 25px rgba(15, 23, 42, 0.06)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '6px 18px',
+                      borderRadius: 9999,
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '0.82rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      transition: 'all 0.25s ease',
+                      border: 'none',
+                      background: isSelected
+                        ? 'linear-gradient(135deg, #931252, #7d0a42)'
+                        : 'transparent',
+                      color: isSelected ? '#ffffff' : '#64748b',
+                      boxShadow: isSelected
+                        ? '0 4px 15px rgba(125, 10, 66, 0.35)'
+                        : 'none',
                     }}
                   >
-                    {/* 3:4 Aspect Ratio Portrait */}
-                    <div style={{ position: 'relative', width: '100%', paddingTop: '125%' }}>
-                      <img
-                        src={f.image}
-                        alt={f.name}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          objectPosition: 'top center',
-                          transition: 'transform 0.6s ease',
-                        }}
-                      />
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.72rem',
+                        opacity: isSelected ? 0.9 : 0.6,
+                      }}
+                    >
+                      0{idx + 1}
+                    </span>
+                    <span>{f.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-                      {/* Gradient Scrim */}
+          {/* Centerpiece Moving Track */}
+          <div
+            className="founders-track-viewport"
+            style={{
+              position: 'relative',
+              zIndex: 20,
+              width: '100%',
+              flex: 1,
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <div
+              ref={trackRef}
+              className="founders-horizontal-track"
+              style={{
+                display: 'flex',
+                height: '100%',
+                width: '200vw',
+                willChange: 'transform',
+              }}
+            >
+              {founders.map((f) => (
+                <div
+                  key={f.id}
+                  className="founders-panel"
+                  style={{
+                    position: 'relative',
+                    width: '100vw',
+                    height: '100%',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 48px',
+                    borderRight: f.id === 0 ? '1px solid rgba(125, 10, 66, 0.12)' : 'none',
+                  }}
+                >
+                  <div
+                    className="container-max"
+                    style={{
+                      width: '100%',
+                      maxWidth: 1240,
+                      margin: '0 auto',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 48,
+                    }}
+                  >
+                    {/* LEFT COLUMN: Narrative & Credentials */}
+                    <div
+                      style={{
+                        width: '56%',
+                        maxWidth: 640,
+                        zIndex: 25,
+                      }}
+                    >
+                      {/* Oversized Subtle Chapter Watermark */}
                       <div
                         style={{
-                          position: 'absolute',
-                          inset: 0,
-                          background:
-                            'linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.15) 50%, rgba(15, 23, 42, 0.05) 100%)',
-                        }}
-                      />
-
-                      {/* Top-Right Leadership Tag */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 18,
-                          right: 18,
-                          background: 'rgba(255, 255, 255, 0.95)',
-                          color: '#7d0a42',
-                          fontSize: '0.72rem',
-                          fontFamily: 'var(--font-mono)',
-                          fontWeight: 800,
-                          padding: '5px 12px',
-                          borderRadius: 9999,
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                          letterSpacing: '0.04em',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
+                          fontFamily: 'var(--font-display)',
+                          fontSize: 'clamp(3.8rem, 5.5vw, 5.2rem)',
+                          fontWeight: 900,
+                          color: 'rgba(125, 10, 66, 0.08)',
+                          lineHeight: 0.8,
+                          marginBottom: -6,
+                          userSelect: 'none',
                         }}
                       >
-                        <UserCheck size={13} />
-                        <span>FOUNDER DIRECT</span>
+                        0{f.id + 1}
                       </div>
 
-                      {/* Floating Identity Banner at the base of Portrait */}
+                      {/* Section Super-Tag */}
                       <div
                         style={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          padding: '26px 24px',
-                          backdropFilter: 'blur(8px)',
-                          background:
-                            'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '4px 12px',
+                          borderRadius: 9999,
+                          background: '#fdf2f7',
+                          border: '1.5px solid rgba(125, 10, 66, 0.22)',
+                          color: '#7d0a42',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          letterSpacing: '0.06em',
+                          marginBottom: 8,
                         }}
                       >
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '0.74rem',
-                            fontWeight: 800,
-                            color: '#fce7f1',
-                            letterSpacing: '0.08em',
-                            marginBottom: 4,
-                          }}
-                        >
-                          {f.badge}
-                        </div>
+                        <Sparkles size={12} />
+                        <span>{f.badge}</span>
+                      </div>
+
+                      {/* Main Headline */}
+                      <h2
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: 'clamp(1.85rem, 2.4vw, 2.35rem)',
+                          fontWeight: 900,
+                          color: '#0f172a',
+                          lineHeight: 1.15,
+                          marginBottom: 4,
+                          letterSpacing: '-0.02em',
+                        }}
+                      >
+                        Architects of the <span className="gradient-text-plum">CMA Dimension.</span>
+                      </h2>
+
+                      {/* Founder Name & Role Line */}
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
                         <h3
                           style={{
                             fontFamily: 'var(--font-display)',
-                            fontSize: '2rem',
+                            fontSize: '1.55rem',
                             fontWeight: 900,
-                            color: '#ffffff',
-                            lineHeight: 1.1,
-                            marginBottom: 4,
+                            color: '#7d0a42',
                           }}
                         >
                           {f.name}
                         </h3>
-                        <div
+                        <span
                           style={{
-                            fontSize: '0.88rem',
-                            color: '#cbd5e1',
-                            fontWeight: 600,
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            color: '#64748b',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
                           }}
                         >
                           {f.role}
-                        </div>
+                        </span>
+                      </div>
+
+                      {/* Vision Tag */}
+                      <div
+                        style={{
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: '#7d0a42',
+                          fontFamily: 'var(--font-mono)',
+                          marginBottom: 10,
+                        }}
+                      >
+                        {f.visionTag}
+                      </div>
+
+                      {/* Founder's Direct Quote Box */}
+                      <div
+                        style={{
+                          background: '#faf8f9',
+                          border: '1.5px solid rgba(125, 10, 66, 0.16)',
+                          borderRadius: 14,
+                          padding: '12px 16px',
+                          marginBottom: 10,
+                          position: 'relative',
+                          boxShadow: '0 4px 16px rgba(125, 10, 66, 0.04)',
+                        }}
+                      >
+                        <Quote
+                          size={22}
+                          style={{
+                            color: 'rgba(125, 10, 66, 0.12)',
+                            position: 'absolute',
+                            top: 8,
+                            right: 10,
+                          }}
+                        />
+                        <p
+                          style={{
+                            fontSize: '0.84rem',
+                            color: '#1e293b',
+                            lineHeight: 1.48,
+                            fontStyle: 'italic',
+                            fontWeight: 500,
+                            position: 'relative',
+                            zIndex: 2,
+                            margin: 0,
+                          }}
+                        >
+                          "{f.quote}"
+                        </p>
+                      </div>
+
+                      {/* Bio Summary */}
+                      <p
+                        style={{
+                          color: '#475569',
+                          fontSize: '0.82rem',
+                          lineHeight: 1.45,
+                          marginBottom: 10,
+                        }}
+                      >
+                        {f.bio}
+                      </p>
+
+                      {/* 3 Pillars / Commitments */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 5,
+                          marginBottom: 12,
+                        }}
+                      >
+                        {f.commitments.map((c, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              fontSize: '0.8rem',
+                              color: '#0f172a',
+                              fontWeight: 600,
+                            }}
+                          >
+                            <CheckCircle2 size={13} style={{ color: '#7d0a42', flexShrink: 0 }} />
+                            <span>{c}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Telemetry Metrics Bar */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(3, 1fr)',
+                          gap: 8,
+                          marginBottom: 14,
+                        }}
+                      >
+                        {f.metrics.map((m, mIdx) => (
+                          <div
+                            key={mIdx}
+                            style={{
+                              background: '#ffffff',
+                              border: '1px solid rgba(125, 10, 66, 0.16)',
+                              padding: '6px 8px',
+                              borderRadius: 8,
+                              textAlign: 'center',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontSize: '0.9rem',
+                                fontWeight: 900,
+                                color: '#7d0a42',
+                                fontFamily: 'var(--font-display)',
+                                marginBottom: 1,
+                              }}
+                            >
+                              {m.value}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.62rem',
+                                color: '#64748b',
+                                fontFamily: 'var(--font-mono)',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {m.label}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            if (onOpenModal) onOpenModal();
+                          }}
+                          className="btn-primary-plum shimmer-sweep"
+                          style={{ padding: '9px 18px', fontSize: '0.84rem' }}
+                        >
+                          <span>Schedule Founder Mentorship Desk</span>
+                          <ArrowRight size={14} />
+                        </button>
+
+                        <a
+                          href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(f.name)}.`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => sound.playClick()}
+                          className="btn-secondary-charcoal"
+                          style={{ padding: '9px 15px', fontSize: '0.84rem' }}
+                        >
+                          <WhatsAppIcon size={14} />
+                          <span>WhatsApp Office</span>
+                        </a>
                       </div>
                     </div>
-                  </motion.div>
-                );
-              })}
+
+                    {/* RIGHT COLUMN: The Visual Plate (GSAP Vault figure.plate style) */}
+                    <div
+                      style={{
+                        width: '40%',
+                        maxWidth: 390,
+                        flexShrink: 0,
+                        position: 'relative',
+                      }}
+                    >
+                      {/* Ambient Background Plum Glow */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          width: '110%',
+                          height: '110%',
+                          borderRadius: 28,
+                          background:
+                            'radial-gradient(circle, rgba(125, 10, 66, 0.16) 0%, rgba(255, 255, 255, 0) 70%)',
+                          filter: 'blur(28px)',
+                          zIndex: 1,
+                          pointerEvents: 'none',
+                        }}
+                      />
+
+                      <figure
+                        className="plate"
+                        style={{
+                          position: 'relative',
+                          zIndex: 2,
+                          margin: 0,
+                        }}
+                      >
+                        <div
+                          style={{
+                            borderRadius: 22,
+                            overflow: 'hidden',
+                            background: '#ffffff',
+                            border: '2px solid rgba(125, 10, 66, 0.22)',
+                            boxShadow:
+                              '0 24px 55px -15px rgba(125, 10, 66, 0.2), 0 8px 20px rgba(15, 23, 42, 0.06)',
+                          }}
+                        >
+                          {/* 3:4 Aspect Ratio Portrait Container */}
+                          <div style={{ position: 'relative', width: '100%', paddingTop: '118%', overflow: 'hidden' }}>
+                            <img
+                              src={f.image}
+                              alt={f.name}
+                              className={`founders-parallax-img-${f.id}`}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: '-6%',
+                                width: '112%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                objectPosition: 'top center',
+                                willChange: 'transform',
+                              }}
+                            />
+
+                            {/* Gradient Scrim */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                inset: 0,
+                                background:
+                                  'linear-gradient(to top, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.12) 50%, rgba(15, 23, 42, 0.04) 100%)',
+                              }}
+                            />
+
+                            {/* Top-Right Leadership Tag */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                top: 14,
+                                right: 14,
+                                background: 'rgba(255, 255, 255, 0.95)',
+                                color: '#7d0a42',
+                                fontSize: '0.68rem',
+                                fontFamily: 'var(--font-mono)',
+                                fontWeight: 800,
+                                padding: '4px 9px',
+                                borderRadius: 9999,
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                letterSpacing: '0.04em',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 5,
+                              }}
+                            >
+                              <UserCheck size={11} />
+                              <span>FOUNDER DIRECT</span>
+                            </div>
+
+                            {/* Floating Identity Banner at the base of Portrait */}
+                            <div
+                              style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                padding: '16px 16px',
+                                backdropFilter: 'blur(8px)',
+                                background:
+                                  'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%)',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontFamily: 'var(--font-mono)',
+                                  fontSize: '0.68rem',
+                                  fontWeight: 800,
+                                  color: '#fce7f1',
+                                  letterSpacing: '0.08em',
+                                  marginBottom: 2,
+                                }}
+                              >
+                                {f.badge}
+                              </div>
+                              <h3
+                                style={{
+                                  fontFamily: 'var(--font-display)',
+                                  fontSize: '1.6rem',
+                                  fontWeight: 900,
+                                  color: '#ffffff',
+                                  lineHeight: 1.1,
+                                  marginBottom: 2,
+                                }}
+                              >
+                                {f.name}
+                              </h3>
+                              <div
+                                style={{
+                                  fontSize: '0.78rem',
+                                  color: '#cbd5e1',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {f.role}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* GSAP Vault Figcaption */}
+                        <figcaption
+                          style={{
+                            textAlign: 'center',
+                            marginTop: 6,
+                            fontSize: '0.72rem',
+                            color: '#94a3b8',
+                            fontFamily: 'var(--font-mono)',
+                          }}
+                        >
+                          Fig. 0{f.id + 1} — {f.id === 0 ? 'Executive Operations & Residential Infrastructure' : 'Academic Vision & Daily 45-Min Testing Engine'}, Attingal Campus
+                        </figcaption>
+                      </figure>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* RIGHT: Dynamic Kinetic Editorial Story on Scroll (CSS Grid Stack Crossfade) */}
+          {/* Bottom Rail Progress (GSAP Vault rail-progress style) */}
           <div
+            className="founders-bottom-progress"
             style={{
-              width: '58%',
-              maxWidth: 640,
-              zIndex: 25,
+              position: 'relative',
+              zIndex: 30,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 6,
+              padding: '0 48px 18px 48px',
             }}
           >
             <div
               style={{
-                display: 'grid',
-                gridTemplateAreas: '"stack"',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.74rem',
+                fontWeight: 800,
               }}
             >
-              {founders.map((f, idx) => {
-                const isSelected = activeFounder === idx;
-                return (
-                  <motion.div
-                    key={f.id}
-                    initial={false}
-                    animate={{
-                      opacity: isSelected ? 1 : 0,
-                      x: isSelected ? 0 : idx < activeFounder ? -20 : 20,
-                      pointerEvents: isSelected ? 'auto' : 'none',
-                    }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      gridArea: 'stack',
-                    }}
-                  >
-                    {/* Section Super-Tag */}
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        padding: '5px 14px',
-                        borderRadius: 9999,
-                        background: '#fdf2f7',
-                        border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                        color: '#7d0a42',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.76rem',
-                        fontWeight: 800,
-                        letterSpacing: '0.06em',
-                        marginBottom: 16,
-                      }}
-                    >
-                      <Sparkles size={13} />
-                      <span>MEET OUR FOUNDERS // 0{idx + 1} OF 02</span>
-                    </div>
+              <span style={{ color: '#7d0a42' }}>
+                0{activeFounder + 1} / 02 • {founders[activeFounder].name.toUpperCase()} // FOUNDERS ARCHITECTURE
+              </span>
+              <span style={{ color: '#94a3b8', letterSpacing: '0.04em' }}>
+                DIRECT MENTORSHIP • ATTINGAL TVM CAMPUS
+              </span>
+            </div>
 
-                    {/* Main Headline */}
-                    <h2
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: 'clamp(2.2rem, 3.2vw, 2.9rem)',
-                        fontWeight: 900,
-                        color: '#0f172a',
-                        lineHeight: 1.15,
-                        marginBottom: 10,
-                        letterSpacing: '-0.02em',
-                      }}
-                    >
-                      Architects of the <br />
-                      <span className="gradient-text-plum">CMA Dimension.</span>
-                    </h2>
-
-                    <div
-                      style={{
-                        fontSize: '0.98rem',
-                        fontWeight: 700,
-                        color: '#7d0a42',
-                        fontFamily: 'var(--font-mono)',
-                        marginBottom: 18,
-                      }}
-                    >
-                      {f.visionTag}
-                    </div>
-
-                    {/* Founder's Direct Quote Box */}
-                    <div
-                      style={{
-                        background: '#faf8f9',
-                        border: '1.5px solid rgba(125, 10, 66, 0.16)',
-                        borderRadius: 20,
-                        padding: '24px 22px',
-                        marginBottom: 22,
-                        position: 'relative',
-                        boxShadow: '0 4px 16px rgba(125, 10, 66, 0.04)',
-                      }}
-                    >
-                      <Quote
-                        size={36}
-                        style={{
-                          color: 'rgba(125, 10, 66, 0.12)',
-                          position: 'absolute',
-                          top: 14,
-                          right: 18,
-                        }}
-                      />
-                      <p
-                        style={{
-                          fontSize: '0.98rem',
-                          color: '#1e293b',
-                          lineHeight: 1.6,
-                          fontStyle: 'italic',
-                          fontWeight: 500,
-                          position: 'relative',
-                          zIndex: 2,
-                        }}
-                      >
-                        "{f.quote}"
-                      </p>
-                    </div>
-
-                    {/* Bio Summary */}
-                    <p
-                      style={{
-                        color: '#475569',
-                        fontSize: '0.92rem',
-                        lineHeight: 1.6,
-                        marginBottom: 20,
-                      }}
-                    >
-                      {f.bio}
-                    </p>
-
-                    {/* 3 Pillars / Commitments */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 10,
-                        marginBottom: 24,
-                      }}
-                    >
-                      {f.commitments.map((c, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            fontSize: '0.88rem',
-                            color: '#0f172a',
-                            fontWeight: 600,
-                          }}
-                        >
-                          <CheckCircle2 size={16} style={{ color: '#7d0a42', flexShrink: 0 }} />
-                          <span>{c}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Telemetry Metrics Bar */}
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: 12,
-                        marginBottom: 26,
-                      }}
-                    >
-                      {f.metrics.map((m, mIdx) => (
-                        <div
-                          key={mIdx}
-                          style={{
-                            background: '#ffffff',
-                            border: '1px solid rgba(125, 10, 66, 0.16)',
-                            padding: '12px 14px',
-                            borderRadius: 14,
-                            textAlign: 'center',
-                            boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize: '1.05rem',
-                              fontWeight: 900,
-                              color: '#7d0a42',
-                              fontFamily: 'var(--font-display)',
-                              marginBottom: 2,
-                            }}
-                          >
-                            {m.value}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '0.72rem',
-                              color: '#64748b',
-                              fontFamily: 'var(--font-mono)',
-                              fontWeight: 700,
-                              textTransform: 'uppercase',
-                            }}
-                          >
-                            {m.label}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <button
-                        onClick={() => {
-                          sound.playClick();
-                          if (onOpenModal) onOpenModal();
-                        }}
-                        className="btn-primary-plum shimmer-sweep"
-                        style={{ padding: '12px 24px', fontSize: '0.9rem' }}
-                      >
-                        <span>Schedule Founder Mentorship Desk</span>
-                        <ArrowRight size={16} />
-                      </button>
-
-                      <a
-                        href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(f.name)}.`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => sound.playClick()}
-                        className="btn-secondary-charcoal"
-                        style={{ padding: '12px 20px', fontSize: '0.9rem' }}
-                      >
-                        <WhatsAppIcon size={16} />
-                        <span>WhatsApp Office</span>
-                      </a>
-                    </div>
-                  </motion.div>
-                );
-              })}
+            <div
+              style={{
+                width: '100%',
+                height: 3,
+                borderRadius: 9999,
+                background: 'rgba(125, 10, 66, 0.12)',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                ref={progressBarRef}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #931252, #c41e73, #7d0a42)',
+                  transform: 'scaleX(0.08)',
+                  transformOrigin: 'left center',
+                  transition: 'transform 0.1s linear',
+                }}
+              />
             </div>
           </div>
         </div>
 
-        {/* Bottom Non-Overlapping Transition Pill */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: 36,
-            position: 'relative',
-            zIndex: 30,
-          }}
-        >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#ffffff',
-              border: '1.5px solid rgba(125, 10, 66, 0.2)',
-              borderRadius: 9999,
-              padding: '6px 14px',
-              boxShadow: '0 4px 16px rgba(125, 10, 66, 0.08)',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '0.72rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 800,
-                color: '#64748b',
-                letterSpacing: '0.04em',
-              }}
-            >
-              TRANSITION:
-            </span>
-            <button
-              onClick={() => selectFounder(0)}
-              style={{
-                background: activeFounder === 0 ? '#7d0a42' : 'transparent',
-                color: activeFounder === 0 ? '#ffffff' : '#7d0a42',
-                border: 'none',
-                borderRadius: 9999,
-                padding: '4px 12px',
-                fontSize: '0.76rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 800,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              01 AJMAL
-            </button>
-            <span style={{ color: '#cbd5e1', fontSize: '0.75rem', fontWeight: 700 }}>→</span>
-            <button
-              onClick={() => selectFounder(1)}
-              style={{
-                background: activeFounder === 1 ? '#7d0a42' : 'transparent',
-                color: activeFounder === 1 ? '#ffffff' : '#7d0a42',
-                border: 'none',
-                borderRadius: 9999,
-                padding: '4px 12px',
-                fontSize: '0.76rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 800,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              02 ABHINAV
-            </button>
-          </div>
-        </div>
+        <style>{`
+          .founders-cue-arrow {
+            width: 20px;
+            height: 2px;
+            background: #7d0a42;
+            position: relative;
+            animation: foundersArrowSlide 1.8s ease-in-out infinite;
+          }
+          .founders-cue-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -3px;
+            width: 6px;
+            height: 6px;
+            border-top: 2px solid #7d0a42;
+            border-right: 2px solid #7d0a42;
+            transform: rotate(45deg);
+          }
+          @keyframes foundersArrowSlide {
+            0%, 100% { transform: translateX(0); opacity: 0.8; }
+            50% { transform: translateX(5px); opacity: 1; }
+          }
+        `}</style>
       </section>
     );
   }
 
   // =========================================================================
-  // 2. MOBILE VIEW (≤1024px): Full Sequential Story Flow
-  //    User scrolls down:
-  //    1. Full Founder 1 (Abhinav) photo & complete description
-  //    2. User reaches Founder 2 (Ajmal) directly FROM THE PHOTO ITSELF!
-  //    3. Full Founder 2 (Ajmal) complete description
+  // 2. MOBILE VIEW (<768px): Seamless Sequential Story Flow
   // =========================================================================
   return (
     <section
       id="founders"
       style={{
-        padding: '56px 0 64px 0',
-        backgroundColor: 'transparent',
+        padding: '48px 0',
+        backgroundColor: '#faf7f9',
         position: 'relative',
       }}
     >
       <div className="container-max" style={{ padding: '0 16px' }}>
         {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div
             className="badge-plum"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              marginBottom: 14,
+              marginBottom: 10,
             }}
           >
-            <Sparkles size={13} />
+            <Sparkles size={12} />
             <span>MEET OUR FOUNDERS // LEADERSHIP</span>
           </div>
           <h2
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2rem, 7.5vw, 2.45rem)',
+              fontSize: 'clamp(1.9rem, 6.5vw, 2.3rem)',
               fontWeight: 900,
               color: '#0f172a',
               lineHeight: 1.15,
               letterSpacing: '-0.025em',
-              marginBottom: 10,
+              marginBottom: 8,
             }}
           >
             Architects of the <br />
@@ -750,146 +890,66 @@ export default function MeetFounders({ onOpenModal }) {
           </h2>
           <p
             style={{
-              fontSize: '0.92rem',
-              color: '#64748b',
-              lineHeight: 1.55,
-              maxWidth: 420,
+              fontSize: '0.86rem',
+              color: '#475569',
+              maxWidth: 520,
               margin: '0 auto',
+              lineHeight: 1.5,
             }}
           >
-            Direct mentorship from South Kerala’s premier CMA academicians and campus leaders in Attingal.
+            Tesser was founded with a singular conviction: CMA demands surgical specialization and direct executive mentorship.
           </p>
         </div>
 
-        {/* Sequential Founder Cards Flow */}
-        {founders.map((f, idx) => (
-          <div key={f.id} className="founder-mobile-block" style={{ marginBottom: idx === 0 ? 44 : 0 }}>
-            {/* Separator Pill between Founder 1 and Founder 2 */}
-            {idx === 1 && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '36px 0 28px 0',
-                  position: 'relative',
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    top: '50%',
-                    height: 1,
-                    background: 'linear-gradient(90deg, transparent, rgba(125, 10, 66, 0.22), transparent)',
-                  }}
-                />
-                <span
-                  style={{
-                    position: 'relative',
-                    zIndex: 2,
-                    background: '#ffffff',
-                    border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                    color: '#7d0a42',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.74rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.08em',
-                    padding: '5px 14px',
-                    borderRadius: 9999,
-                    boxShadow: '0 4px 14px rgba(125, 10, 66, 0.08)',
-                  }}
-                >
-                  CO-FOUNDER 02 // ACADEMIC VISION &amp; CURRICULUM
-                </span>
-              </div>
-            )}
-
-            {/* 1. Founder Luxury Portrait Card (User sees founder from the photo itself!) */}
+        {/* Founder Cards Stack */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+          {founders.map((f) => (
             <div
+              key={f.id}
               style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: 400,
-                margin: '0 auto 24px auto',
-                borderRadius: 24,
-                overflow: 'hidden',
                 background: '#ffffff',
-                border: '2px solid rgba(125, 10, 66, 0.24)',
-                boxShadow: '0 20px 50px -10px rgba(125, 10, 66, 0.2), 0 8px 20px rgba(15, 23, 42, 0.06)',
+                borderRadius: 20,
+                border: '1.5px solid rgba(125, 10, 66, 0.18)',
+                overflow: 'hidden',
+                boxShadow: '0 10px 30px rgba(125, 10, 66, 0.08)',
               }}
             >
-              <div style={{ position: 'relative', width: '100%', paddingTop: '125%' }}>
+              {/* Portrait Header */}
+              <div style={{ position: 'relative', width: '100%', height: 320 }}>
                 <img
                   src={f.image}
                   alt={f.name}
                   style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
                     objectPosition: 'top center',
                   }}
                 />
-
-                {/* Gradient Scrim */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
                     background:
-                      'linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.2) 50%, rgba(15, 23, 42, 0.05) 100%)',
+                      'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.3) 60%, transparent 100%)',
                   }}
                 />
-
-                {/* Top-Right Leadership Tag */}
                 <div
                   style={{
                     position: 'absolute',
-                    top: 16,
+                    bottom: 16,
+                    left: 16,
                     right: 16,
-                    background: 'rgba(255, 255, 255, 0.96)',
-                    color: '#7d0a42',
-                    fontSize: '0.7rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: 9999,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    letterSpacing: '0.04em',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 5,
-                  }}
-                >
-                  <UserCheck size={12} />
-                  <span>FOUNDER DIRECT</span>
-                </div>
-
-                {/* Floating Identity Banner at the base of Portrait */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    padding: '22px 20px',
-                    backdropFilter: 'blur(8px)',
-                    background:
-                      'linear-gradient(to top, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.65) 80%, transparent 100%)',
                   }}
                 >
                   <div
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.7rem',
+                      fontSize: '0.68rem',
                       fontWeight: 800,
                       color: '#fce7f1',
-                      letterSpacing: '0.08em',
-                      marginBottom: 4,
+                      letterSpacing: '0.06em',
+                      marginBottom: 2,
                     }}
                   >
                     {f.badge}
@@ -897,220 +957,145 @@ export default function MeetFounders({ onOpenModal }) {
                   <h3
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: '1.9rem',
+                      fontSize: '1.6rem',
                       fontWeight: 900,
                       color: '#ffffff',
                       lineHeight: 1.1,
-                      marginBottom: 4,
+                      marginBottom: 2,
                     }}
                   >
                     {f.name}
                   </h3>
-                  <div
-                    style={{
-                      fontSize: '0.84rem',
-                      color: '#cbd5e1',
-                      fontWeight: 600,
-                    }}
-                  >
+                  <div style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 600 }}>
                     {f.role}
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* 2. Full Founder Description, Quote, Bio, Metrics & CTAs */}
-            <div style={{ maxWidth: 440, margin: '0 auto' }}>
-              {/* Vision Tag */}
-              <div
-                style={{
-                  fontSize: '0.92rem',
-                  fontWeight: 800,
-                  color: '#7d0a42',
-                  fontFamily: 'var(--font-mono)',
-                  marginBottom: 14,
-                  lineHeight: 1.35,
-                }}
-              >
-                {f.visionTag}
-              </div>
-
-              {/* Founder's Direct Quote Box */}
-              <div
-                style={{
-                  background: '#faf8f9',
-                  border: '1.5px solid rgba(125, 10, 66, 0.16)',
-                  borderRadius: 18,
-                  padding: '20px 18px',
-                  marginBottom: 18,
-                  position: 'relative',
-                  boxShadow: '0 4px 16px rgba(125, 10, 66, 0.04)',
-                }}
-              >
-                <Quote
-                  size={32}
+              {/* Card Body */}
+              <div style={{ padding: '20px 18px' }}>
+                {/* Quote */}
+                <div
                   style={{
-                    color: 'rgba(125, 10, 66, 0.12)',
-                    position: 'absolute',
-                    top: 12,
-                    right: 14,
-                  }}
-                />
-                <p
-                  style={{
-                    fontSize: '0.94rem',
-                    color: '#1e293b',
-                    lineHeight: 1.58,
-                    fontStyle: 'italic',
-                    fontWeight: 500,
-                    position: 'relative',
-                    zIndex: 2,
+                    background: '#fdf2f7',
+                    border: '1px solid rgba(125, 10, 66, 0.14)',
+                    borderRadius: 12,
+                    padding: '12px 14px',
+                    marginBottom: 16,
                   }}
                 >
-                  "{f.quote}"
+                  <p
+                    style={{
+                      fontSize: '0.84rem',
+                      color: '#1e293b',
+                      fontStyle: 'italic',
+                      lineHeight: 1.5,
+                      margin: 0,
+                    }}
+                  >
+                    "{f.quote}"
+                  </p>
+                </div>
+
+                <p style={{ fontSize: '0.82rem', color: '#475569', lineHeight: 1.55, marginBottom: 16 }}>
+                  {f.bio}
                 </p>
-              </div>
 
-              {/* Bio Summary */}
-              <p
-                style={{
-                  color: '#475569',
-                  fontSize: '0.9rem',
-                  lineHeight: 1.58,
-                  marginBottom: 18,
-                }}
-              >
-                {f.bio}
-              </p>
-
-              {/* 3 Pillars / Commitments */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10,
-                  marginBottom: 20,
-                }}
-              >
-                {f.commitments.map((c, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 10,
-                      fontSize: '0.86rem',
-                      color: '#0f172a',
-                      fontWeight: 600,
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    <CheckCircle2
-                      size={16}
-                      style={{ color: '#7d0a42', flexShrink: 0, marginTop: 2 }}
-                    />
-                    <span>{c}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Telemetry Metrics Bar */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: 8,
-                  marginBottom: 22,
-                }}
-              >
-                {f.metrics.map((m, mIdx) => (
-                  <div
-                    key={mIdx}
-                    style={{
-                      background: '#ffffff',
-                      border: '1px solid rgba(125, 10, 66, 0.16)',
-                      padding: '10px 8px',
-                      borderRadius: 12,
-                      textAlign: 'center',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                    }}
-                  >
+                {/* Commitments */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 18 }}>
+                  {f.commitments.map((c, i) => (
                     <div
+                      key={i}
                       style={{
-                        fontSize: '0.92rem',
-                        fontWeight: 900,
-                        color: '#7d0a42',
-                        fontFamily: 'var(--font-display)',
-                        marginBottom: 2,
-                        lineHeight: 1.15,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        fontSize: '0.78rem',
+                        color: '#0f172a',
+                        fontWeight: 600,
                       }}
                     >
-                      {m.value}
+                      <CheckCircle2 size={13} style={{ color: '#7d0a42', flexShrink: 0 }} />
+                      <span>{c}</span>
                     </div>
+                  ))}
+                </div>
+
+                {/* Metrics */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: 6,
+                    marginBottom: 18,
+                  }}
+                >
+                  {f.metrics.map((m, mIdx) => (
                     <div
+                      key={mIdx}
                       style={{
-                        fontSize: '0.66rem',
-                        color: '#64748b',
-                        fontFamily: 'var(--font-mono)',
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        lineHeight: 1.2,
+                        background: '#faf8f9',
+                        border: '1px solid rgba(125, 10, 66, 0.12)',
+                        padding: '6px 4px',
+                        borderRadius: 8,
+                        textAlign: 'center',
                       }}
                     >
-                      {m.label}
+                      <div
+                        style={{
+                          fontSize: '0.82rem',
+                          fontWeight: 900,
+                          color: '#7d0a42',
+                          fontFamily: 'var(--font-display)',
+                        }}
+                      >
+                        {m.value}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '0.58rem',
+                          color: '#64748b',
+                          fontFamily: 'var(--font-mono)',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {m.label}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
 
-              {/* Action Buttons */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  width: '100%',
-                  gap: 10,
-                }}
-              >
-                <button
-                  onClick={() => {
-                    sound.playClick();
-                    if (onOpenModal) onOpenModal();
-                  }}
-                  className="btn-primary-plum shimmer-sweep"
-                  style={{
-                    width: '100%',
-                    padding: '13px 20px',
-                    fontSize: '0.92rem',
-                    justifyContent: 'center',
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  <span>Schedule Founder Mentorship Desk</span>
-                  <ArrowRight size={16} />
-                </button>
+                {/* Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      if (onOpenModal) onOpenModal();
+                    }}
+                    className="btn-primary-plum shimmer-sweep"
+                    style={{ padding: '10px 16px', fontSize: '0.82rem', justifyContent: 'center', width: '100%' }}
+                  >
+                    <span>Schedule Founder Mentorship Desk</span>
+                    <ArrowRight size={13} />
+                  </button>
 
-                <a
-                  href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(f.name)}.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => sound.playClick()}
-                  className="btn-secondary-charcoal"
-                  style={{
-                    width: '100%',
-                    padding: '12px 20px',
-                    fontSize: '0.92rem',
-                    justifyContent: 'center',
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  <WhatsAppIcon size={18} />
-                  <span>WhatsApp Office</span>
-                </a>
+                  <a
+                    href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(f.name)}.`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => sound.playClick()}
+                    className="btn-secondary-charcoal"
+                    style={{ padding: '10px 16px', fontSize: '0.82rem', justifyContent: 'center', width: '100%' }}
+                  >
+                    <WhatsAppIcon size={13} />
+                    <span>WhatsApp Office</span>
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

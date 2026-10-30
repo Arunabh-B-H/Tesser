@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
-import { Sparkles, ArrowRight, CheckCircle2, Shield, TrendingUp, Layers, ChevronDown } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle2, Shield, Layers, RotateCcw } from 'lucide-react';
 import { sound } from '../utils/sound';
 
 export default function DimensionalScroll3D({ onOpenModal }) {
@@ -9,31 +9,15 @@ export default function DimensionalScroll3D({ onOpenModal }) {
   const canvasRef = useRef(null);
   const [activeStage, setActiveStage] = useState(0); // 0: Foundation, 1: Intermediate, 2: Final
 
-  // Detect small screens (≤ 1024px) - completely remove dimensions component on small screens
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth <= 1024;
-    }
-    return false;
-  });
-
+  // 3D WebGL Engine for the Tesser Chiral Emblem
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Three.js WebGL 3D Interactive Tesseract & Hyper-Prism Engine (Desktop only)
-  useEffect(() => {
-    if (isMobile || !canvasRef.current) return;
+    if (!canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const width = canvas.clientWidth || 600;
-    const height = canvas.clientHeight || 600;
+    let width = canvas.clientWidth || 540;
+    let height = canvas.clientHeight || 540;
 
-    // Scene, Camera, Renderer
+    // Scene & Perspective Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 8.5);
@@ -47,205 +31,355 @@ export default function DimensionalScroll3D({ onOpenModal }) {
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Master Group for 3D Tesseract
+    // Master Group for 3D Emblem & Celestial Rings
     const masterGroup = new THREE.Group();
     scene.add(masterGroup);
 
-    // 1. Outer 4D Hypercube Wireframe (Solid Deep Plum #7d0a42)
-    const outerSize = 2.4;
-    const outerGeometry = new THREE.BoxGeometry(outerSize, outerSize, outerSize);
-    const outerEdges = new THREE.EdgesGeometry(outerGeometry);
-    const outerLineMaterial = new THREE.LineBasicMaterial({
-      color: 0x7d0a42,
-      linewidth: 2,
-      transparent: true,
-      opacity: 0.85,
-    });
-    const outerWireframe = new THREE.LineSegments(outerEdges, outerLineMaterial);
-    masterGroup.add(outerWireframe);
-
-    // 2. Outer Vertex Anchor Spheres (Theme Magenta #c41e73)
-    const sphereGeo = new THREE.SphereGeometry(0.08, 16, 16);
-    const sphereMat = new THREE.MeshStandardMaterial({
-      color: 0xc41e73,
-      emissive: 0x7d0a42,
-      emissiveIntensity: 0.6,
-      metalness: 0.8,
-      roughness: 0.2,
-    });
-    const vertexSpheres = [];
-    const half = outerSize / 2;
-    const corners = [
-      [-half, -half, -half],
-      [half, -half, -half],
-      [half, half, -half],
-      [-half, half, -half],
-      [-half, -half, half],
-      [half, -half, half],
-      [half, half, half],
-      [-half, half, half],
+    // 1. Tesser Iconic Chiral 3-Blade Ribbon Geometry (Exact Polygon)
+    const shape = new THREE.Shape();
+    const outerCoords = [
+      [1.93, 0],
+      [1.651, -0.144],
+      [1.535, -0.271],
+      [1.553, -0.416],
+      [1.511, -0.55],
+      [1.525, -0.711],
+      [1.543, -0.891],
+      [1.52, -1.064],
+      [1.384, -1.161],
+      [1.242, -1.242],
+      [1.113, -1.327],
+      [0.979, -1.398],
+      [0.854, -1.478],
+      [0.732, -1.57],
+      [0.592, -1.628],
+      [0.455, -1.697],
+      [0.318, -1.803],
+      [0.164, -1.873],
+      [0, -1.979],
+      [-0.181, -2.07],
+      [-0.387, -2.193],
+      [-0.628, -2.342],
+      [-0.855, -2.348],
+      [-1.035, -2.22],
+      [-1.225, -2.121],
+      [-1.405, -2.007],
+      [-1.527, -1.82],
+      [-1.522, -1.522],
+      [-1.516, -1.272],
+      [-1.54, -1.079],
+      [-1.714, -0.99],
+      [-1.884, -0.878],
+      [-2.093, -0.762],
+      [-2.27, -0.608],
+      [-2.266, -0.4],
+      [-2.268, -0.198],
+      [-2.252, 0],
+      [-2.268, 0.198],
+      [-2.266, 0.4],
+      [-2.27, 0.608],
+      [-2.255, 0.821],
+      [-2.265, 1.056],
+      [-2.271, 1.311],
+      [-2.27, 1.589],
+      [-2.274, 1.908],
+      [-2.064, 2.064],
+      [-1.845, 2.199],
+      [-1.632, 2.331],
+      [-1.348, 2.336],
+      [-0.931, 1.996],
+      [-0.719, 1.976],
+      [-0.557, 2.079],
+      [-0.382, 2.169],
+      [-0.198, 2.268],
+      [0, 2.375],
+      [0.198, 2.268],
+      [0.382, 2.169],
+      [0.557, 2.079],
+      [0.719, 1.976],
+      [0.878, 1.884],
+      [1.039, 1.8],
+      [1.192, 1.702],
+      [1.352, 1.611],
+      [1.505, 1.505],
+      [1.687, 1.415],
+      [1.865, 1.306],
+      [2.057, 1.188],
+      [2.265, 1.056],
+      [2.255, 0.821],
+      [2.27, 0.608],
+      [2.266, 0.4],
+      [2.268, 0.198]
     ];
-    corners.forEach((pos) => {
-      const sp = new THREE.Mesh(sphereGeo, sphereMat);
-      sp.position.set(pos[0], pos[1], pos[2]);
-      masterGroup.add(sp);
-      vertexSpheres.push(sp);
+
+    shape.moveTo(outerCoords[0][0], outerCoords[0][1]);
+    for (let i = 1; i < outerCoords.length; i++) {
+      shape.lineTo(outerCoords[i][0], outerCoords[i][1]);
+    }
+    shape.closePath();
+
+    // Central Triangular Void
+    const holePath = new THREE.Path();
+    const holeCoords = [
+      [0.02, 0],
+      [0, -0.22],
+      [-0.08, -0.21],
+      [-0.17, -0.14],
+      [-0.32, -0.06],
+      [-0.4, 0],
+      [-0.67, 0.25],
+      [-0.55, 0.33],
+      [-0.36, 0.44],
+      [-0.18, 0.54],
+      [0, 0.64],
+    ];
+    holePath.moveTo(holeCoords[0][0], holeCoords[0][1]);
+    for (let i = 1; i < holeCoords.length; i++) {
+      holePath.lineTo(holeCoords[i][0], holeCoords[i][1]);
+    }
+    holePath.closePath();
+    shape.holes.push(holePath);
+
+    const extrudeSettings = {
+      depth: 0.38,
+      bevelEnabled: true,
+      bevelSegments: 4,
+      steps: 1,
+      bevelSize: 0.05,
+      bevelThickness: 0.05,
+    };
+
+    const logoGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    logoGeometry.center();
+    logoGeometry.computeVertexNormals();
+
+    // 2. Authentic Tesser Magenta / Plum Materials
+    const frontMaterial = new THREE.MeshStandardMaterial({
+      color: 0x931252, // Vibrant Tesser Magenta Plum
+      emissive: 0x5a0b32, // Internal plum radiance
+      emissiveIntensity: 0.48,
+      metalness: 0.18,
+      roughness: 0.26,
+      side: THREE.DoubleSide,
     });
 
-    // 3. Inner Morphing Tesseract Core (Solid Deep Plum Polyhedron)
-    const innerSize = 1.25;
-    const innerGeometry = new THREE.OctahedronGeometry(innerSize, 0);
-    const innerMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0x7d0a42,
-      emissive: 0x4a0525,
-      emissiveIntensity: 0.5,
-      metalness: 0.75,
-      roughness: 0.15,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
+    const sideMaterial = new THREE.MeshStandardMaterial({
+      color: 0x5a1b30, // Shadow wine plum
+      emissive: 0x320818, // Warm subtle shadow glow
+      emissiveIntensity: 0.4,
+      metalness: 0.24,
+      roughness: 0.32,
+      side: THREE.DoubleSide,
+    });
+
+    const logoMesh = new THREE.Mesh(logoGeometry, [frontMaterial, sideMaterial]);
+    logoMesh.scale.set(0.68, 0.68, 0.68);
+    masterGroup.add(logoMesh);
+
+    // 3. Beveled Razor-Sharp Edge Wireframe
+    const edgeGeo = new THREE.EdgesGeometry(logoGeometry, 24);
+    const edgeMat = new THREE.LineBasicMaterial({
+      color: 0xff66aa, // Luminous rose-magenta edge lines
       transparent: true,
-      opacity: 0.88,
+      opacity: 0.65,
     });
-    const innerCore = new THREE.Mesh(innerGeometry, innerMaterial);
-    masterGroup.add(innerCore);
+    const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
+    logoMesh.add(edgeLines);
 
-    // Inner wireframe overlay
-    const innerEdges = new THREE.EdgesGeometry(innerGeometry);
-    const innerLineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
-    const innerWire = new THREE.LineSegments(innerEdges, innerLineMat);
-    innerCore.add(innerWire);
+    // 4. Celestial Orbital Rings (Compact & Perfectly Framed)
+    const ringGroup = new THREE.Group();
+    masterGroup.add(ringGroup);
 
-    // 4. Connecting 4D Dimensional Rays (outer corners to inner core)
-    const rayLines = [];
-    const rayMaterial = new THREE.LineBasicMaterial({
+    // Gold Celestial Orbit Ring
+    const ringGeo1 = new THREE.TorusGeometry(2.35, 0.014, 16, 100);
+    const ringMat1 = new THREE.MeshBasicMaterial({
+      color: 0xd4af37,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const ring1 = new THREE.Mesh(ringGeo1, ringMat1);
+    ring1.rotation.x = Math.PI * 0.38;
+    ring1.rotation.y = Math.PI * 0.12;
+    ringGroup.add(ring1);
+
+    // Plum Celestial Orbit Ring
+    const ringGeo2 = new THREE.TorusGeometry(2.75, 0.012, 16, 100);
+    const ringMat2 = new THREE.MeshBasicMaterial({
       color: 0x931252,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.5,
     });
-    corners.forEach((c) => {
-      const points = [new THREE.Vector3(c[0], c[1], c[2]), new THREE.Vector3(0, 0, 0)];
-      const rayGeo = new THREE.BufferGeometry().setFromPoints(points);
-      const line = new THREE.Line(rayGeo, rayMaterial);
-      masterGroup.add(line);
-      rayLines.push(line);
-    });
+    const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+    ring2.rotation.x = -Math.PI * 0.32;
+    ring2.rotation.y = -Math.PI * 0.22;
+    ringGroup.add(ring2);
 
-    // 5. Orbiting Dimensional Particle Halo
-    const particleCount = 120;
+    // Orbiting Satellites (Golden with Plum Emissive Core)
+    const satelliteGeo = new THREE.SphereGeometry(0.065, 16, 16);
+    const satelliteMat = new THREE.MeshStandardMaterial({
+      color: 0xf0c76d,
+      emissive: 0x7d0a42,
+      emissiveIntensity: 0.8,
+      metalness: 0.9,
+      roughness: 0.15,
+    });
+    const satellites = [
+      new THREE.Mesh(satelliteGeo, satelliteMat),
+      new THREE.Mesh(satelliteGeo, satelliteMat),
+      new THREE.Mesh(satelliteGeo, satelliteMat),
+    ];
+    satellites.forEach((s) => ringGroup.add(s));
+
+    // 5. Floating Dust Particles
+    const particleCount = 60;
     const particleGeo = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
       const angle = (i / particleCount) * Math.PI * 2;
-      const radius = 2.2 + (Math.random() - 0.5) * 0.8;
+      const radius = 2.0 + (Math.random() - 0.5) * 1.5;
       particlePos[i * 3] = Math.cos(angle) * radius;
-      particlePos[i * 3 + 1] = (Math.random() - 0.5) * 0.9;
+      particlePos[i * 3 + 1] = (Math.random() - 0.5) * 3.0;
       particlePos[i * 3 + 2] = Math.sin(angle) * radius;
     }
     particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
     const particleMat = new THREE.PointsMaterial({
       color: 0x7d0a42,
-      size: 0.05,
+      size: 0.038,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.55,
     });
-    const particleHalo = new THREE.Points(particleGeo, particleMat);
-    masterGroup.add(particleHalo);
+    const particleField = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleField);
 
-    // 6. Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // 6. Cinema Lighting Rig
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
-    keyLight.position.set(5, 5, 5);
+    const keyLight = new THREE.DirectionalLight(0xfffaed, 2.6);
+    keyLight.position.set(5, 6, 7);
     scene.add(keyLight);
 
-    const plumRimLight = new THREE.DirectionalLight(0xc41e73, 2.8);
-    plumRimLight.position.set(-5, -3, -4);
-    scene.add(plumRimLight);
+    const rimLight = new THREE.DirectionalLight(0xff69b4, 2.2);
+    rimLight.position.set(-6, -4, -4);
+    scene.add(rimLight);
 
-    const centralGlow = new THREE.PointLight(0x7d0a42, 2.5, 10);
-    scene.add(centralGlow);
+    const fillLight = new THREE.DirectionalLight(0xf0c76d, 1.8);
+    fillLight.position.set(0, -6, 5);
+    scene.add(fillLight);
 
-    // Mouse Parallax Physics
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetMouseX = 0;
-    let targetMouseY = 0;
+    const cursorLight = new THREE.PointLight(0xffffff, 1.2, 16);
+    cursorLight.position.set(0, 0, 7);
+    scene.add(cursorLight);
+
+    // 7. Interactive Drag & Mouse Physics
+    let isDragging = false;
+    let previousPointer = { x: 0, y: 0 };
+    let rotationVelocity = { x: 0, y: 0 };
+    let baseRotation = { x: 0.08, y: -0.15 };
+    let dragRotation = { x: 0, y: 0 };
+    let targetParallax = { x: 0, y: 0 };
+    let currentParallax = { x: 0, y: 0 };
+
+    const handlePointerDown = (e) => {
+      isDragging = true;
+      previousPointer = { x: e.clientX, y: e.clientY };
+      canvas.style.cursor = 'grabbing';
+    };
 
     const handlePointerMove = (e) => {
       const rect = canvas.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      targetMouseX = x * 0.6;
-      targetMouseY = y * 0.6;
+      const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const ny = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      targetParallax.x = nx * 0.25;
+      targetParallax.y = ny * 0.25;
+
+      cursorLight.position.x = nx * 3;
+      cursorLight.position.y = ny * 3;
+
+      if (isDragging) {
+        const deltaX = e.clientX - previousPointer.x;
+        const deltaY = e.clientY - previousPointer.y;
+        rotationVelocity.y = deltaX * 0.007;
+        rotationVelocity.x = deltaY * 0.007;
+        dragRotation.y += rotationVelocity.y;
+        dragRotation.x += rotationVelocity.x;
+        previousPointer = { x: e.clientX, y: e.clientY };
+      }
     };
 
+    const handlePointerUp = () => {
+      isDragging = false;
+      canvas.style.cursor = 'grab';
+    };
+
+    canvas.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
 
     // Resize Handler
     const handleResize = () => {
       if (!canvas) return;
-      const newWidth = canvas.clientWidth || 600;
-      const newHeight = canvas.clientHeight || 600;
+      const newWidth = canvas.clientWidth || 440;
+      const newHeight = canvas.clientHeight || 420;
       camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(newWidth, newHeight);
     };
-
     window.addEventListener('resize', handleResize);
 
     // Animation Loop
     let animationFrameId;
-    let clock = new THREE.Clock();
+    let startTime = performance.now();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      const elapsed = (performance.now() - startTime) * 0.001;
 
-      const elapsed = clock.getElapsedTime();
-      const stageVal = activeStage / 2;
+      // Parallax smoothing
+      currentParallax.x += (targetParallax.x - currentParallax.x) * 0.06;
+      currentParallax.y += (targetParallax.y - currentParallax.y) * 0.06;
 
-      // Mouse Lerp Damping
-      mouseX += (targetMouseX - mouseX) * 0.06;
-      mouseY += (targetMouseY - mouseY) * 0.06;
+      if (isDragging) {
+        // Dragging physics
+      } else {
+        // Inertia damping
+        dragRotation.x += rotationVelocity.x;
+        dragRotation.y += rotationVelocity.y;
+        rotationVelocity.x *= 0.92;
+        rotationVelocity.y *= 0.92;
+      }
 
-      // Primary 4D Transformation & Continuous Rotation
-      masterGroup.rotation.y = elapsed * 0.35 + mouseX * 0.5 + stageVal * Math.PI;
-      masterGroup.rotation.x = Math.sin(elapsed * 0.5) * 0.3 + mouseY * 0.5;
-      masterGroup.rotation.z = Math.cos(elapsed * 0.4) * 0.2;
+      // Elegant front-facing floating oscillation (subtle ±20 deg floating tilt)
+      const ambientFloatY = Math.sin(elapsed * 0.75) * 0.32;
+      const ambientFloatX = Math.cos(elapsed * 0.5) * 0.08;
 
-      // Morphing Inner Core based on Dimension Stage
-      innerCore.rotation.x = -elapsed * 0.5;
-      innerCore.rotation.y = elapsed * 0.6;
+      // Stage scale targets
+      const stageScales = [0.68, 0.74, 0.8];
+      const baseScale = stageScales[activeStage] || 0.68;
+      const breath = 1 + Math.sin(elapsed * 2) * 0.02;
+      const targetScale = baseScale * breath;
+      logoMesh.scale.set(targetScale, targetScale, targetScale);
 
-      // Dimensional Expansion based on Stage
-      const expansion = 1 + stageVal * 0.4;
-      outerWireframe.scale.set(expansion, expansion, expansion);
+      // Apply rotation: Base + Ambient Float + Drag Offset + Cursor Parallax
+      logoMesh.rotation.x = baseRotation.x + ambientFloatX + dragRotation.x + currentParallax.y;
+      logoMesh.rotation.y = baseRotation.y + ambientFloatY + dragRotation.y + currentParallax.x;
 
-      // Inner core breathing scale
-      const innerScale = 1.0 + Math.sin(elapsed * 2) * 0.06 + stageVal * 0.25;
-      innerCore.scale.set(innerScale, innerScale, innerScale);
+      // Animate orbital rings
+      ring1.rotation.z = elapsed * 0.22;
+      ring2.rotation.z = -elapsed * 0.25;
 
-      // Dynamic vertex breathing
-      vertexSpheres.forEach((sp, idx) => {
-        const c = corners[idx];
-        const push = 1 + Math.sin(elapsed * 3 + idx) * 0.05 + stageVal * 0.35;
-        sp.position.set(c[0] * push, c[1] * push, c[2] * push);
+      // Animate satellites
+      satellites.forEach((s, i) => {
+        const sAngle = elapsed * 0.8 + (i * Math.PI * 2) / 3;
+        const sR = 2.35;
+        s.position.x = Math.cos(sAngle) * sR;
+        s.position.y = Math.sin(sAngle) * sR * 0.38;
+        s.position.z = Math.sin(sAngle) * sR * 0.58;
       });
 
-      // Update 4D Ray Lines connecting to outer corners
-      rayLines.forEach((line, idx) => {
-        const c = corners[idx];
-        const push = 1 + Math.sin(elapsed * 3 + idx) * 0.05 + stageVal * 0.35;
-        const positions = line.geometry.attributes.position.array;
-        positions[0] = c[0] * push;
-        positions[1] = c[1] * push;
-        positions[2] = c[2] * push;
-        line.geometry.attributes.position.needsUpdate = true;
-      });
-
-      // Halo Rotation
-      particleHalo.rotation.y = -elapsed * 0.3;
-      particleHalo.rotation.x = Math.sin(elapsed * 0.5) * 0.2;
+      // Animate particle field
+      particleField.rotation.y = -elapsed * 0.05;
 
       renderer.render(scene, camera);
     };
@@ -254,15 +388,27 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      canvas.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
-      outerGeometry.dispose();
-      innerGeometry.dispose();
-      sphereGeo.dispose();
+      logoGeometry.dispose();
+      edgeGeo.dispose();
+      ringGeo1.dispose();
+      ringGeo2.dispose();
+      satelliteGeo.dispose();
       particleGeo.dispose();
+      frontMaterial.dispose();
+      sideMaterial.dispose();
+      edgeMat.dispose();
+      ringMat1.dispose();
+      ringMat2.dispose();
+      satelliteMat.dispose();
+      particleMat.dispose();
     };
-  }, [activeStage, isMobile]);
+  }, [activeStage]);
 
   // Stage Data for the 3 Dimensions of CMA
   const stages = [
@@ -336,16 +482,10 @@ export default function DimensionalScroll3D({ onOpenModal }) {
 
   const currentStage = stages[activeStage];
 
-  // Direct tab selection for dimensions with sound & physics transition
   const selectStage = (stageIndex) => {
     sound.playClick();
     setActiveStage(stageIndex);
   };
-
-  // Remove completely on small screens (mobile & tablet) as requested
-  if (isMobile) {
-    return null;
-  }
 
   return (
     <section
@@ -354,54 +494,34 @@ export default function DimensionalScroll3D({ onOpenModal }) {
       className="dimensional-scroll-section"
       style={{
         position: 'relative',
-        minHeight: '100vh',
-        backgroundColor: 'transparent',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '110px 0 60px 0',
+        width: '100%',
+        backgroundColor: '#faf7f9',
+        padding: '50px 0 60px 0',
         overflow: 'hidden',
       }}
     >
-      {/* Viewport Container */}
+      {/* Background Subtle Technical Grid */}
       <div
-        className="dimensional-sticky-wrap"
         style={{
-          position: 'relative',
-          width: '100%',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          backgroundColor: 'transparent',
+          position: 'absolute',
+          inset: 0,
           backgroundImage:
-            'radial-gradient(circle at 50% 50%, rgba(125, 10, 66, 0.04) 0%, rgba(255, 255, 255, 0) 70%)',
+            'radial-gradient(rgba(125, 10, 66, 0.08) 1px, transparent 1px)',
+          backgroundSize: '36px 36px',
+          opacity: 0.65,
+          pointerEvents: 'none',
         }}
-      >
-        {/* Ambient Subtle Grid Pattern */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage:
-              'radial-gradient(rgba(125, 10, 66, 0.09) 1px, transparent 1px)',
-            backgroundSize: '36px 36px',
-            opacity: 0.65,
-            pointerEvents: 'none',
-          }}
-        />
+      />
 
+      <div className="container-max" style={{ position: 'relative', zIndex: 10, padding: '0 24px' }}>
         {/* Top Control Bar with Dimension Pill Switchers */}
         <div
           className="dimensional-top-bar"
           style={{
-            position: 'relative',
-            zIndex: 30,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '0 24px',
-            marginBottom: 24,
+            marginBottom: 36,
           }}
         >
           <div
@@ -409,10 +529,10 @@ export default function DimensionalScroll3D({ onOpenModal }) {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: 'rgba(255, 255, 255, 0.92)',
+              background: 'rgba(255, 255, 255, 0.94)',
               border: '1.5px solid rgba(125, 10, 66, 0.18)',
               borderRadius: 9999,
-              padding: '6px 8px',
+              padding: '5px 8px',
               backdropFilter: 'blur(16px)',
               boxShadow: '0 10px 30px rgba(125, 10, 66, 0.08)',
             }}
@@ -427,7 +547,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    padding: '8px 18px',
+                    padding: '8px 20px',
                     borderRadius: 9999,
                     fontFamily: 'var(--font-display)',
                     fontSize: '0.84rem',
@@ -460,37 +580,11 @@ export default function DimensionalScroll3D({ onOpenModal }) {
           </div>
         </div>
 
-        {/* Centerpiece 3D Canvas Canvas Layout */}
-        <div
-          className="container-max dimensional-main-container"
-          style={{
-            position: 'relative',
-            zIndex: 20,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            maxWidth: 1320,
-            margin: '0 auto',
-            padding: '100px 32px 60px 32px',
-          }}
-        >
-          {/* LEFT COLUMN: Dynamic Kinetic Typography (CSS Grid Stack Crossfade) */}
-          <div
-            className="dimensional-story-col"
-            style={{
-              width: '37%',
-              maxWidth: 430,
-              zIndex: 25,
-            }}
-          >
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateAreas: '"stack"',
-              }}
-            >
+        {/* 3-Column Layout: Left Narrative - Center Grand 3D Canvas - Right Telemetry HUD */}
+        <div className="dimensional-content-grid">
+          {/* LEFT COLUMN: Narrative & Credentials */}
+          <div className="dimensional-story-col">
+            <div style={{ display: 'grid', gridTemplateAreas: '"stack"' }}>
               {stages.map((st, idx) => {
                 const isCurrent = activeStage === idx;
                 return (
@@ -499,13 +593,11 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                     initial={false}
                     animate={{
                       opacity: isCurrent ? 1 : 0,
-                      y: isCurrent ? 0 : idx < activeStage ? -14 : 14,
+                      y: isCurrent ? 0 : idx < activeStage ? -12 : 12,
                       pointerEvents: isCurrent ? 'auto' : 'none',
                     }}
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      gridArea: 'stack',
-                    }}
+                    style={{ gridArea: 'stack' }}
                   >
                     {/* Stage Badge */}
                     <div
@@ -513,19 +605,19 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 6,
-                        padding: '5px 14px',
+                        padding: '4px 12px',
                         borderRadius: 9999,
                         background: '#fdf2f7',
                         border: '1.5px solid rgba(125, 10, 66, 0.22)',
                         color: '#7d0a42',
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '0.76rem',
+                        fontSize: '0.74rem',
                         fontWeight: 800,
                         letterSpacing: '0.06em',
-                        marginBottom: 16,
+                        marginBottom: 12,
                       }}
                     >
-                      <Sparkles size={13} />
+                      <Sparkles size={12} />
                       <span>{st.badge}</span>
                     </div>
 
@@ -533,49 +625,49 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                     <h2
                       style={{
                         fontFamily: 'var(--font-display)',
-                        fontSize: 'clamp(2.2rem, 3.5vw, 3rem)',
+                        fontSize: 'clamp(1.9rem, 2.6vw, 2.45rem)',
                         fontWeight: 900,
                         color: '#0f172a',
                         lineHeight: 1.15,
-                        marginBottom: 12,
+                        marginBottom: 8,
                         letterSpacing: '-0.02em',
                       }}
                     >
                       {st.title}
                     </h2>
 
-                    {/* Subtitle with Solid Plum Accent */}
+                    {/* Subtitle */}
                     <h3
                       style={{
-                        fontSize: '1.08rem',
+                        fontSize: '0.98rem',
                         fontWeight: 700,
                         color: '#7d0a42',
                         lineHeight: 1.45,
-                        marginBottom: 18,
+                        marginBottom: 14,
                       }}
                     >
                       {st.subtitle}
                     </h3>
 
-                    {/* Description Body */}
+                    {/* Description */}
                     <p
                       style={{
                         color: '#334155',
-                        fontSize: '0.94rem',
-                        lineHeight: 1.65,
-                        marginBottom: 24,
+                        fontSize: '0.88rem',
+                        lineHeight: 1.6,
+                        marginBottom: 18,
                       }}
                     >
                       {st.desc}
                     </p>
 
-                    {/* Highlights List */}
+                    {/* Highlights */}
                     <div
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 10,
-                        marginBottom: 28,
+                        gap: 8,
+                        marginBottom: 22,
                       }}
                     >
                       {st.highlights.map((h, i) => (
@@ -584,37 +676,37 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                           style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 10,
-                            fontSize: '0.88rem',
+                            gap: 8,
+                            fontSize: '0.82rem',
                             color: '#1e293b',
                             fontWeight: 600,
                           }}
                         >
-                          <CheckCircle2 size={16} style={{ color: '#7d0a42', flexShrink: 0 }} />
+                          <CheckCircle2 size={14} style={{ color: '#7d0a42', flexShrink: 0 }} />
                           <span>{h}</span>
                         </div>
                       ))}
                     </div>
 
-                    {/* Primary Action Button */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    {/* Buttons */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <button
                         onClick={() => {
                           sound.playClick();
                           if (onOpenModal) onOpenModal();
                         }}
                         className="btn-primary-plum shimmer-sweep"
-                        style={{ padding: '12px 24px', fontSize: '0.92rem' }}
+                        style={{ padding: '10px 20px', fontSize: '0.86rem' }}
                       >
                         <span>Apply for {st.dimension}</span>
-                        <ArrowRight size={16} />
+                        <ArrowRight size={14} />
                       </button>
 
                       <a
                         href="#programs"
                         onClick={() => sound.playClick()}
                         className="btn-secondary-charcoal"
-                        style={{ padding: '12px 20px', fontSize: '0.9rem' }}
+                        style={{ padding: '10px 16px', fontSize: '0.86rem' }}
                       >
                         <span>View Syllabus</span>
                       </a>
@@ -625,24 +717,8 @@ export default function DimensionalScroll3D({ onOpenModal }) {
             </div>
           </div>
 
-          {/* CENTER 3D WEBGL TESSERACT VIEWPORT */}
-          <div
-            className="dimensional-canvas-wrap"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '100%',
-              maxWidth: 620,
-              height: 560,
-              zIndex: 15,
-              pointerEvents: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          {/* CENTER COLUMN: Grand Interactive 3D Tesser Emblem */}
+          <div className="dimensional-canvas-wrap">
             <canvas
               ref={canvasRef}
               style={{
@@ -654,21 +730,9 @@ export default function DimensionalScroll3D({ onOpenModal }) {
             />
           </div>
 
-          {/* RIGHT COLUMN: Interactive 3D Telemetry HUD Card (CSS Grid Stack Crossfade) */}
-          <div
-            className="dimensional-hud-col"
-            style={{
-              width: '35%',
-              maxWidth: 400,
-              zIndex: 25,
-            }}
-          >
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateAreas: '"stack"',
-              }}
-            >
+          {/* RIGHT COLUMN: Telemetry HUD Card */}
+          <div className="dimensional-hud-col">
+            <div style={{ display: 'grid', gridTemplateAreas: '"stack"' }}>
               {stages.map((st, idx) => {
                 const isCurrent = activeStage === idx;
                 return (
@@ -678,18 +742,18 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                     animate={{
                       opacity: isCurrent ? 1 : 0,
                       scale: isCurrent ? 1 : 0.96,
-                      y: isCurrent ? 0 : idx < activeStage ? -14 : 14,
+                      y: isCurrent ? 0 : idx < activeStage ? -12 : 12,
                       pointerEvents: isCurrent ? 'auto' : 'none',
                     }}
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     style={{
                       gridArea: 'stack',
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                      borderRadius: 24,
-                      padding: '34px 28px',
+                      background: 'rgba(255, 255, 255, 0.96)',
+                      border: '1.5px solid rgba(125, 10, 66, 0.2)',
+                      borderRadius: 22,
+                      padding: '28px 24px',
                       boxShadow:
-                        '0 25px 60px -10px rgba(125, 10, 66, 0.15), 0 10px 25px rgba(15, 23, 42, 0.05)',
+                        '0 24px 55px -10px rgba(125, 10, 66, 0.14), 0 8px 20px rgba(15, 23, 42, 0.04)',
                       backdropFilter: 'blur(20px)',
                       position: 'relative',
                       overflow: 'hidden',
@@ -702,7 +766,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                         top: 0,
                         left: 0,
                         right: 0,
-                        height: 4,
+                        height: 3,
                         background: 'linear-gradient(90deg, #7d0a42, #c41e73, #7d0a42)',
                       }}
                     />
@@ -713,15 +777,15 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginBottom: 20,
+                        marginBottom: 16,
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <Layers size={18} style={{ color: '#7d0a42' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                        <Layers size={16} style={{ color: '#7d0a42' }} />
                         <span
                           style={{
                             fontFamily: 'var(--font-mono)',
-                            fontSize: '0.8rem',
+                            fontSize: '0.74rem',
                             fontWeight: 800,
                             color: '#7d0a42',
                           }}
@@ -733,7 +797,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                       <span
                         style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: '0.85rem',
+                          fontSize: '0.8rem',
                           fontWeight: 900,
                           color: '#0f172a',
                         }}
@@ -742,32 +806,32 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                       </span>
                     </div>
 
-                    {/* Big Metric Callout */}
+                    {/* Metric Callout */}
                     <div
                       style={{
                         background: '#fdf2f7',
                         border: '1px solid rgba(125, 10, 66, 0.15)',
-                        borderRadius: 16,
-                        padding: '20px 24px',
-                        marginBottom: 24,
+                        borderRadius: 14,
+                        padding: '16px 20px',
+                        marginBottom: 18,
                         textAlign: 'center',
                       }}
                     >
                       <div
                         style={{
                           fontFamily: 'var(--font-display)',
-                          fontSize: '2.5rem',
+                          fontSize: '2.3rem',
                           fontWeight: 900,
                           color: '#7d0a42',
                           lineHeight: 1,
-                          marginBottom: 6,
+                          marginBottom: 4,
                         }}
                       >
                         {st.metricValue}
                       </div>
                       <div
                         style={{
-                          fontSize: '0.84rem',
+                          fontSize: '0.78rem',
                           fontWeight: 700,
                           color: '#475569',
                           textTransform: 'uppercase',
@@ -778,13 +842,13 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                       </div>
                     </div>
 
-                    {/* Telemetry Data Grid */}
+                    {/* Telemetry Grid */}
                     <div
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 12,
-                        marginBottom: 20,
+                        gap: 10,
+                        marginBottom: 16,
                       }}
                     >
                       {st.telemetry.map((t, tIdx) => (
@@ -794,16 +858,16 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            padding: '10px 14px',
+                            padding: '8px 12px',
                             background: '#ffffff',
                             border: '1px solid #f1f5f9',
-                            borderRadius: 10,
-                            boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                            borderRadius: 8,
+                            boxShadow: '0 2px 5px rgba(0,0,0,0.02)',
                           }}
                         >
                           <span
                             style={{
-                              fontSize: '0.82rem',
+                              fontSize: '0.78rem',
                               color: '#64748b',
                               fontFamily: 'var(--font-mono)',
                               fontWeight: 700,
@@ -813,7 +877,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                           </span>
                           <span
                             style={{
-                              fontSize: '0.88rem',
+                              fontSize: '0.84rem',
                               color: '#0f172a',
                               fontWeight: 800,
                             }}
@@ -824,20 +888,20 @@ export default function DimensionalScroll3D({ onOpenModal }) {
                       ))}
                     </div>
 
-                    {/* Guaranteed Exclusivity Seal */}
+                    {/* Exclusivity Seal */}
                     <div
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 8,
-                        fontSize: '0.78rem',
+                        gap: 7,
+                        fontSize: '0.74rem',
                         color: '#15803d',
                         fontWeight: 700,
                         borderTop: '1px solid #f1f5f9',
-                        paddingTop: 14,
+                        paddingTop: 12,
                       }}
                     >
-                      <Shield size={15} />
+                      <Shield size={14} />
                       <span>Attingal TVM Campus Exclusive • No General Commerce</span>
                     </div>
                   </motion.div>
@@ -849,50 +913,57 @@ export default function DimensionalScroll3D({ onOpenModal }) {
       </div>
 
       <style>{`
+        .dimensional-content-grid {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 36px;
+          width: 100%;
+        }
+        .dimensional-story-col {
+          width: 32%;
+          max-width: 380px;
+          flex-shrink: 0;
+          z-index: 20;
+        }
+        .dimensional-canvas-wrap {
+          flex: 1;
+          height: 420px;
+          max-width: 440px;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 15;
+          margin: 0 auto;
+        }
+        .dimensional-hud-col {
+          width: 31%;
+          max-width: 360px;
+          flex-shrink: 0;
+          z-index: 20;
+        }
+
         @media (max-width: 1024px) {
-          .dimensional-scroll-section {
-            height: auto !important;
-            position: static !important;
-            padding: 48px 0 !important;
-          }
-          .dimensional-sticky-wrap {
-            position: static !important;
-            height: auto !important;
-            min-height: auto !important;
-            overflow: visible !important;
-            padding: 0 !important;
-          }
-          .dimensional-top-bar {
-            position: relative !important;
-            top: auto !important;
-            padding: 0 16px 20px 16px !important;
-          }
-          .dimensional-main-container {
+          .dimensional-content-grid {
             flex-direction: column !important;
-            height: auto !important;
-            padding: 0 16px 36px 16px !important;
             gap: 28px !important;
           }
           .dimensional-canvas-wrap {
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            transform: none !important;
             width: 100% !important;
-            max-width: 320px !important;
-            height: 260px !important;
-            margin: 0 auto !important;
+            max-width: 460px !important;
+            height: 400px !important;
+            order: 1;
           }
           .dimensional-story-col {
             width: 100% !important;
-            max-width: 100% !important;
+            max-width: 600px !important;
+            order: 2;
           }
           .dimensional-hud-col {
             width: 100% !important;
-            max-width: 100% !important;
-          }
-          .dimensional-scroll-hint {
-            display: none !important;
+            max-width: 600px !important;
+            order: 3;
           }
         }
       `}</style>

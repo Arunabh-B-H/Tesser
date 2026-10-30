@@ -92,7 +92,7 @@ body {
     radial-gradient(at 35% 90%, rgba(196, 30, 115, 0.06) 0px, transparent 50%);
   background-attachment: fixed;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   color: var(--text-primary);
 }
