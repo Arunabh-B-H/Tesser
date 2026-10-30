@@ -109,6 +109,231 @@ export default function CmaToppers({ onOpenModal }) {
     setActiveTab((prev) => (prev === 'final' ? 'intermediate' : 'final'));
   };
 
+  // Shared Achiever Card Component matching authentic reference design
+  const renderCard = (t) => (
+    <motion.div
+      key={t.id}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      style={{
+        background: '#ffffff',
+        borderRadius: 22,
+        overflow: 'hidden',
+        boxShadow: '0 12px 30px rgba(125, 10, 66, 0.12), 0 4px 12px rgba(15, 23, 42, 0.04)',
+        border: '1.5px solid rgba(125, 10, 66, 0.22)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* 1. Upper Solid Deep Plum & Burgundy Banner (Matching Actual Tesser Posters) */}
+      <div
+        style={{
+          background: 'linear-gradient(155deg, #7d0a42 0%, #58062d 60%, #430421 100%)',
+          padding: '20px 18px 14px 18px',
+          position: 'relative',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: 250,
+        }}
+      >
+        {/* Subtle Gold Corner Accents */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 10,
+            right: 12,
+            opacity: 0.85,
+            pointerEvents: 'none',
+          }}
+        >
+          <Star size={14} fill="#e5b85c" color="#e5b85c" />
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            top: 10,
+            left: 12,
+            opacity: 0.85,
+            pointerEvents: 'none',
+          }}
+        >
+          <Star size={14} fill="#e5b85c" color="#e5b85c" />
+        </div>
+
+        {/* Header: CMA FINAL / CMA INTERMEDIATE (In Authentic Luxury Gold Typography) */}
+        <div style={{ textAlign: 'center', marginBottom: 8 }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.95rem',
+              fontWeight: 900,
+              color: '#f0c76d', // Rich Gold
+              letterSpacing: '0.04em',
+              lineHeight: 1,
+              textShadow: '0 2px 8px rgba(0,0,0,0.4)',
+            }}
+          >
+            {t.programTitle}
+          </div>
+          <div
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '0.88rem',
+              fontWeight: 900,
+              color: '#ffffff',
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              lineHeight: 1.2,
+              marginTop: 2,
+            }}
+          >
+            {t.programSub}
+          </div>
+        </div>
+
+        {/* Gold Pill Badge: GROUP 4 QUALIFIED / BOTH GROUP QUALIFIED */}
+        <div
+          style={{
+            background: 'rgba(240, 199, 109, 0.15)',
+            border: '1.5px solid #e5b85c',
+            borderRadius: 9999,
+            padding: '4px 14px',
+            color: '#f0c76d',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.68rem',
+            fontWeight: 800,
+            letterSpacing: '0.06em',
+            marginBottom: 14,
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          }}
+        >
+          {t.badge}
+        </div>
+
+        {/* Student Face Photo in Crisp Rounded Frame */}
+        <div
+          style={{
+            position: 'relative',
+            width: 122,
+            height: 126,
+            borderRadius: 18,
+            overflow: 'hidden',
+            border: '2.5px solid rgba(240, 199, 109, 0.7)',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
+            backgroundColor: '#ffffff',
+          }}
+        >
+          <img
+            src={t.photo}
+            alt={t.name}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center top',
+            }}
+          />
+        </div>
+      </div>
+
+      {/* 2. Gold Name Plaque (Matching Authentic Tesser Name Badge) */}
+      <div
+        style={{
+          background: '#12040b', // Dark Obsidian Base
+          borderTop: '2px solid #d4af37',
+          borderBottom: '2px solid #d4af37',
+          padding: '8px 12px',
+          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
+      >
+        <Star size={12} fill="#e5b85c" color="#e5b85c" />
+        <span
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '0.98rem',
+            fontWeight: 900,
+            color: '#f0c76d', // Gold typography
+            letterSpacing: '0.06em',
+            textTransform: 'uppercase',
+          }}
+        >
+          {t.name}
+        </span>
+        <Star size={12} fill="#e5b85c" color="#e5b85c" />
+      </div>
+
+      {/* 3. Lower Box with QUALIFIED Status */}
+      <div
+        style={{
+          background: '#ffffff',
+          padding: '18px 16px 20px 16px',
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      >
+        {/* Status Pill */}
+        <div
+          style={{
+            background: '#fdf2f7',
+            border: '1px solid rgba(125, 10, 66, 0.25)',
+            color: '#7d0a42',
+            fontSize: '0.64rem',
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 900,
+            letterSpacing: '0.1em',
+            padding: '3px 10px',
+            borderRadius: 9999,
+            marginBottom: 8,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+          }}
+        >
+          <CheckCircle2 size={12} style={{ color: '#7d0a42' }} />
+          <span>ICMAI RESULT STATUS</span>
+        </div>
+
+        {/* Big Callout: QUALIFIED */}
+        <div
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '2.3rem',
+            fontWeight: 900,
+            color: '#7d0a42', // Solid Deep Plum
+            lineHeight: 1,
+            letterSpacing: '0.02em',
+            marginBottom: 6,
+          }}
+        >
+          {t.status}
+        </div>
+
+        <div
+          style={{
+            fontSize: '0.78rem',
+            color: '#475569',
+            fontWeight: 600,
+            maxWidth: 240,
+            lineHeight: 1.4,
+          }}
+        >
+          {t.details}
+        </div>
+      </div>
+    </motion.div>
+  );
+
   return (
     <section
       id="toppers"
@@ -292,249 +517,46 @@ export default function CmaToppers({ onOpenModal }) {
           </div>
 
           {/* Exactly 3 Real Achiever Cards (Animated Conveyor Slide Every 3 Seconds) */}
-          <div style={{ position: 'relative', overflow: 'hidden' }}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+          <div style={{ position: 'relative', overflow: 'hidden', maxWidth: 1080, margin: '0 auto 30px auto' }}>
+            <div
+              className="toppers-slider-track"
+              style={{
+                display: 'flex',
+                width: '200%',
+                transform: activeTab === 'final' ? 'translateX(0%)' : 'translateX(-50%)',
+                transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              {/* Slide 1: CMA Final (3 Cards) */}
+              <div
                 className="toppers-grid"
                 style={{
+                  width: '50%',
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
                   gap: 24,
-                  marginBottom: 30,
-                  maxWidth: 1080,
-                  margin: '0 auto 30px auto',
+                  padding: '0 6px',
+                  boxSizing: 'border-box',
                 }}
               >
-                {displayToppers.map((t) => (
-                  <motion.div
-                    key={t.id}
-                    whileHover={{ y: -6 }}
-                    transition={{ duration: 0.25, ease: 'easeOut' }}
-                    style={{
-                      background: '#ffffff',
-                      borderRadius: 22,
-                      overflow: 'hidden',
-                      boxShadow: '0 12px 30px rgba(125, 10, 66, 0.12), 0 4px 12px rgba(15, 23, 42, 0.04)',
-                      border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    {/* 1. Upper Solid Deep Plum & Burgundy Banner (Matching Actual Tesser Posters) */}
-                    <div
-                      style={{
-                        background: 'linear-gradient(155deg, #7d0a42 0%, #58062d 60%, #430421 100%)',
-                        padding: '20px 18px 14px 18px',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        minHeight: 250,
-                      }}
-                    >
-                      {/* Subtle Gold Corner Accents */}
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 10,
-                          right: 12,
-                          opacity: 0.85,
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        <Star size={14} fill="#e5b85c" color="#e5b85c" />
-                      </div>
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 10,
-                          left: 12,
-                          opacity: 0.85,
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        <Star size={14} fill="#e5b85c" color="#e5b85c" />
-                      </div>
+                {finalAchievers.map(renderCard)}
+              </div>
 
-                      {/* Header: CMA FINAL / CMA INTERMEDIATE (In Authentic Luxury Gold Typography) */}
-                      <div style={{ textAlign: 'center', marginBottom: 8 }}>
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '1.95rem',
-                            fontWeight: 900,
-                            color: '#f0c76d', // Rich Gold
-                            letterSpacing: '0.04em',
-                            lineHeight: 1,
-                            textShadow: '0 2px 8px rgba(0,0,0,0.4)',
-                          }}
-                        >
-                          {t.programTitle}
-                        </div>
-                        <div
-                          style={{
-                            fontFamily: 'var(--font-display)',
-                            fontSize: '0.88rem',
-                            fontWeight: 900,
-                            color: '#ffffff',
-                            letterSpacing: '0.14em',
-                            textTransform: 'uppercase',
-                            lineHeight: 1.2,
-                            marginTop: 2,
-                          }}
-                        >
-                          {t.programSub}
-                        </div>
-                      </div>
-
-                      {/* Gold Pill Badge: GROUP 4 QUALIFIED / BOTH GROUP QUALIFIED */}
-                      <div
-                        style={{
-                          background: 'rgba(240, 199, 109, 0.15)',
-                          border: '1.5px solid #e5b85c',
-                          borderRadius: 9999,
-                          padding: '4px 14px',
-                          color: '#f0c76d',
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          letterSpacing: '0.06em',
-                          marginBottom: 14,
-                          whiteSpace: 'nowrap',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                        }}
-                      >
-                        {t.badge}
-                      </div>
-
-                      {/* Student Face Photo in Crisp Rounded Frame */}
-                      <div
-                        style={{
-                          position: 'relative',
-                          width: 122,
-                          height: 126,
-                          borderRadius: 18,
-                          overflow: 'hidden',
-                          border: '2.5px solid rgba(240, 199, 109, 0.7)',
-                          boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-                          backgroundColor: '#ffffff',
-                        }}
-                      >
-                        <img
-                          src={t.photo}
-                          alt={t.name}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center top',
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* 2. Gold Name Plaque (Matching Authentic Tesser Name Badge) */}
-                    <div
-                      style={{
-                        background: '#12040b', // Dark Obsidian Base
-                        borderTop: '2px solid #d4af37',
-                        borderBottom: '2px solid #d4af37',
-                        padding: '8px 12px',
-                        textAlign: 'center',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 8,
-                      }}
-                    >
-                      <Star size={12} fill="#e5b85c" color="#e5b85c" />
-                      <span
-                        style={{
-                          fontFamily: 'var(--font-display)',
-                          fontSize: '0.98rem',
-                          fontWeight: 900,
-                          color: '#f0c76d', // Gold typography
-                          letterSpacing: '0.06em',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {t.name}
-                      </span>
-                      <Star size={12} fill="#e5b85c" color="#e5b85c" />
-                    </div>
-
-                    {/* 3. Lower Box with QUALIFIED Status */}
-                    <div
-                      style={{
-                        background: '#ffffff',
-                        padding: '18px 16px 20px 16px',
-                        textAlign: 'center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flex: 1,
-                      }}
-                    >
-                      {/* Status Pill */}
-                      <div
-                        style={{
-                          background: '#fdf2f7',
-                          border: '1px solid rgba(125, 10, 66, 0.25)',
-                          color: '#7d0a42',
-                          fontSize: '0.64rem',
-                          fontFamily: 'var(--font-mono)',
-                          fontWeight: 900,
-                          letterSpacing: '0.1em',
-                          padding: '3px 10px',
-                          borderRadius: 9999,
-                          marginBottom: 8,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                        }}
-                      >
-                        <CheckCircle2 size={12} style={{ color: '#7d0a42' }} />
-                        <span>ICMAI RESULT STATUS</span>
-                      </div>
-
-                      {/* Big Callout: QUALIFIED */}
-                      <div
-                        style={{
-                          fontFamily: 'var(--font-display)',
-                          fontSize: '2.3rem',
-                          fontWeight: 900,
-                          color: '#7d0a42', // Solid Deep Plum
-                          lineHeight: 1,
-                          letterSpacing: '0.02em',
-                          marginBottom: 6,
-                        }}
-                      >
-                        {t.status}
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: '0.78rem',
-                          color: '#475569',
-                          fontWeight: 600,
-                          maxWidth: 240,
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {t.details}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+              {/* Slide 2: CMA Intermediate (3 Cards) */}
+              <div
+                className="toppers-grid"
+                style={{
+                  width: '50%',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: 24,
+                  padding: '0 6px',
+                  boxSizing: 'border-box',
+                }}
+              >
+                {intermediateAchievers.map(renderCard)}
+              </div>
+            </div>
           </div>
 
           {/* Interactive Cohort Switcher Dots & Auto-Slide Indicator */}
@@ -728,16 +750,27 @@ export default function CmaToppers({ onOpenModal }) {
             padding: 28px 16px 24px 16px !important;
             border-radius: 20px !important;
           }
+          .toppers-slider-track {
+            display: flex !important;
+            width: 200% !important;
+          }
+          .toppers-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 12px !important;
+          }
+        }
+        @media (max-width: 768px) {
           .toppers-grid {
             display: flex !important;
             overflow-x: auto !important;
             scroll-snap-type: x mandatory !important;
             -webkit-overflow-scrolling: touch !important;
-            gap: 16px !important;
+            gap: 14px !important;
             padding-bottom: 8px !important;
           }
           .toppers-grid > div {
-            flex: 0 0 280px !important;
+            flex: 0 0 260px !important;
             scroll-snap-align: center !important;
           }
         }

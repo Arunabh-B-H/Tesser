@@ -476,7 +476,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
             padding: '100px 32px 60px 32px',
           }}
         >
-          {/* LEFT COLUMN: Dynamic Kinetic Typography on Scroll */}
+          {/* LEFT COLUMN: Dynamic Kinetic Typography (CSS Grid Stack Crossfade) */}
           <div
             className="dimensional-story-col"
             style={{
@@ -485,128 +485,144 @@ export default function DimensionalScroll3D({ onOpenModal }) {
               zIndex: 25,
             }}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeStage}
-                initial={{ opacity: 0, y: 25 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -25 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {/* Stage Badge */}
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '5px 14px',
-                    borderRadius: 9999,
-                    background: '#fdf2f7',
-                    border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                    color: '#7d0a42',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.76rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.06em',
-                    marginBottom: 16,
-                  }}
-                >
-                  <Sparkles size={13} />
-                  <span>{currentStage.badge}</span>
-                </div>
-
-                {/* Main Headline */}
-                <h2
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: 'clamp(2.2rem, 3.5vw, 3rem)',
-                    fontWeight: 900,
-                    color: '#0f172a',
-                    lineHeight: 1.15,
-                    marginBottom: 12,
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  {currentStage.title}
-                </h2>
-
-                {/* Subtitle with Solid Plum Accent */}
-                <h3
-                  style={{
-                    fontSize: '1.08rem',
-                    fontWeight: 700,
-                    color: '#7d0a42',
-                    lineHeight: 1.45,
-                    marginBottom: 18,
-                  }}
-                >
-                  {currentStage.subtitle}
-                </h3>
-
-                {/* Description Body */}
-                <p
-                  style={{
-                    color: '#334155',
-                    fontSize: '0.94rem',
-                    lineHeight: 1.65,
-                    marginBottom: 24,
-                  }}
-                >
-                  {currentStage.desc}
-                </p>
-
-                {/* Highlights List */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 10,
-                    marginBottom: 28,
-                  }}
-                >
-                  {currentStage.highlights.map((h, i) => (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateAreas: '"stack"',
+              }}
+            >
+              {stages.map((st, idx) => {
+                const isCurrent = activeStage === idx;
+                return (
+                  <motion.div
+                    key={st.id}
+                    initial={false}
+                    animate={{
+                      opacity: isCurrent ? 1 : 0,
+                      y: isCurrent ? 0 : idx < activeStage ? -14 : 14,
+                      pointerEvents: isCurrent ? 'auto' : 'none',
+                    }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      gridArea: 'stack',
+                    }}
+                  >
+                    {/* Stage Badge */}
                     <div
-                      key={i}
                       style={{
-                        display: 'flex',
+                        display: 'inline-flex',
                         alignItems: 'center',
-                        gap: 10,
-                        fontSize: '0.88rem',
-                        color: '#1e293b',
-                        fontWeight: 600,
+                        gap: 6,
+                        padding: '5px 14px',
+                        borderRadius: 9999,
+                        background: '#fdf2f7',
+                        border: '1.5px solid rgba(125, 10, 66, 0.22)',
+                        color: '#7d0a42',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.06em',
+                        marginBottom: 16,
                       }}
                     >
-                      <CheckCircle2 size={16} style={{ color: '#7d0a42', flexShrink: 0 }} />
-                      <span>{h}</span>
+                      <Sparkles size={13} />
+                      <span>{st.badge}</span>
                     </div>
-                  ))}
-                </div>
 
-                {/* Primary Action Button */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <button
-                    onClick={() => {
-                      sound.playClick();
-                      if (onOpenModal) onOpenModal();
-                    }}
-                    className="btn-primary-plum shimmer-sweep"
-                    style={{ padding: '12px 24px', fontSize: '0.92rem' }}
-                  >
-                    <span>Apply for {currentStage.dimension}</span>
-                    <ArrowRight size={16} />
-                  </button>
+                    {/* Main Headline */}
+                    <h2
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 'clamp(2.2rem, 3.5vw, 3rem)',
+                        fontWeight: 900,
+                        color: '#0f172a',
+                        lineHeight: 1.15,
+                        marginBottom: 12,
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      {st.title}
+                    </h2>
 
-                  <a
-                    href="#programs"
-                    onClick={() => sound.playClick()}
-                    className="btn-secondary-charcoal"
-                    style={{ padding: '12px 20px', fontSize: '0.9rem' }}
-                  >
-                    <span>View Syllabus</span>
-                  </a>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                    {/* Subtitle with Solid Plum Accent */}
+                    <h3
+                      style={{
+                        fontSize: '1.08rem',
+                        fontWeight: 700,
+                        color: '#7d0a42',
+                        lineHeight: 1.45,
+                        marginBottom: 18,
+                      }}
+                    >
+                      {st.subtitle}
+                    </h3>
+
+                    {/* Description Body */}
+                    <p
+                      style={{
+                        color: '#334155',
+                        fontSize: '0.94rem',
+                        lineHeight: 1.65,
+                        marginBottom: 24,
+                      }}
+                    >
+                      {st.desc}
+                    </p>
+
+                    {/* Highlights List */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 10,
+                        marginBottom: 28,
+                      }}
+                    >
+                      {st.highlights.map((h, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            fontSize: '0.88rem',
+                            color: '#1e293b',
+                            fontWeight: 600,
+                          }}
+                        >
+                          <CheckCircle2 size={16} style={{ color: '#7d0a42', flexShrink: 0 }} />
+                          <span>{h}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Primary Action Button */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          if (onOpenModal) onOpenModal();
+                        }}
+                        className="btn-primary-plum shimmer-sweep"
+                        style={{ padding: '12px 24px', fontSize: '0.92rem' }}
+                      >
+                        <span>Apply for {st.dimension}</span>
+                        <ArrowRight size={16} />
+                      </button>
+
+                      <a
+                        href="#programs"
+                        onClick={() => sound.playClick()}
+                        className="btn-secondary-charcoal"
+                        style={{ padding: '12px 20px', fontSize: '0.9rem' }}
+                      >
+                        <span>View Syllabus</span>
+                      </a>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
           {/* CENTER 3D WEBGL TESSERACT VIEWPORT */}
@@ -638,7 +654,7 @@ export default function DimensionalScroll3D({ onOpenModal }) {
             />
           </div>
 
-          {/* RIGHT COLUMN: Interactive 3D Telemetry HUD Card on Scroll */}
+          {/* RIGHT COLUMN: Interactive 3D Telemetry HUD Card (CSS Grid Stack Crossfade) */}
           <div
             className="dimensional-hud-col"
             style={{
@@ -647,172 +663,187 @@ export default function DimensionalScroll3D({ onOpenModal }) {
               zIndex: 25,
             }}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeStage}
-                initial={{ opacity: 0, scale: 0.94, x: 20 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.94, x: -20 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                  borderRadius: 24,
-                  padding: '34px 28px',
-                  boxShadow:
-                    '0 25px 60px -10px rgba(125, 10, 66, 0.15), 0 10px 25px rgba(15, 23, 42, 0.05)',
-                  backdropFilter: 'blur(20px)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Top Glowing Trim */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: 4,
-                    background: 'linear-gradient(90deg, #7d0a42, #c41e73, #7d0a42)',
-                  }}
-                />
-
-                {/* Stage Header */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: 20,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Layers size={18} style={{ color: '#7d0a42' }} />
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.8rem',
-                        fontWeight: 800,
-                        color: '#7d0a42',
-                      }}
-                    >
-                      3D DIMENSION TELEMETRY
-                    </span>
-                  </div>
-
-                  <span
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateAreas: '"stack"',
+              }}
+            >
+              {stages.map((st, idx) => {
+                const isCurrent = activeStage === idx;
+                return (
+                  <motion.div
+                    key={st.id}
+                    initial={false}
+                    animate={{
+                      opacity: isCurrent ? 1 : 0,
+                      scale: isCurrent ? 1 : 0.96,
+                      y: isCurrent ? 0 : idx < activeStage ? -14 : 14,
+                      pointerEvents: isCurrent ? 'auto' : 'none',
+                    }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.85rem',
-                      fontWeight: 900,
-                      color: '#0f172a',
+                      gridArea: 'stack',
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      border: '1.5px solid rgba(125, 10, 66, 0.22)',
+                      borderRadius: 24,
+                      padding: '34px 28px',
+                      boxShadow:
+                        '0 25px 60px -10px rgba(125, 10, 66, 0.15), 0 10px 25px rgba(15, 23, 42, 0.05)',
+                      backdropFilter: 'blur(20px)',
+                      position: 'relative',
+                      overflow: 'hidden',
                     }}
                   >
-                    0{activeStage + 1} / 03
-                  </span>
-                </div>
-
-                {/* Big Metric Callout */}
-                <div
-                  style={{
-                    background: '#fdf2f7',
-                    border: '1px solid rgba(125, 10, 66, 0.15)',
-                    borderRadius: 16,
-                    padding: '20px 24px',
-                    marginBottom: 24,
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '2.5rem',
-                      fontWeight: 900,
-                      color: '#7d0a42',
-                      lineHeight: 1,
-                      marginBottom: 6,
-                    }}
-                  >
-                    {currentStage.metricValue}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      color: '#475569',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                    }}
-                  >
-                    {currentStage.metricLabel}
-                  </div>
-                </div>
-
-                {/* Telemetry Data Grid */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 12,
-                    marginBottom: 20,
-                  }}
-                >
-                  {currentStage.telemetry.map((t, idx) => (
+                    {/* Top Glowing Trim */}
                     <div
-                      key={idx}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 4,
+                        background: 'linear-gradient(90deg, #7d0a42, #c41e73, #7d0a42)',
+                      }}
+                    />
+
+                    {/* Stage Header */}
+                    <div
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '10px 14px',
-                        background: '#ffffff',
-                        border: '1px solid #f1f5f9',
-                        borderRadius: 10,
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                        marginBottom: 20,
                       }}
                     >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Layers size={18} style={{ color: '#7d0a42' }} />
+                        <span
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
+                            color: '#7d0a42',
+                          }}
+                        >
+                          3D DIMENSION TELEMETRY
+                        </span>
+                      </div>
+
                       <span
                         style={{
-                          fontSize: '0.82rem',
-                          color: '#64748b',
                           fontFamily: 'var(--font-mono)',
-                          fontWeight: 700,
-                        }}
-                      >
-                        {t.label}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '0.88rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 900,
                           color: '#0f172a',
-                          fontWeight: 800,
                         }}
                       >
-                        {t.value}
+                        0{idx + 1} / 03
                       </span>
                     </div>
-                  ))}
-                </div>
 
-                {/* Guaranteed Exclusivity Seal */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    fontSize: '0.78rem',
-                    color: '#15803d',
-                    fontWeight: 700,
-                    borderTop: '1px solid #f1f5f9',
-                    paddingTop: 14,
-                  }}
-                >
-                  <Shield size={15} />
-                  <span>Attingal TVM Campus Exclusive • No General Commerce</span>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                    {/* Big Metric Callout */}
+                    <div
+                      style={{
+                        background: '#fdf2f7',
+                        border: '1px solid rgba(125, 10, 66, 0.15)',
+                        borderRadius: 16,
+                        padding: '20px 24px',
+                        marginBottom: 24,
+                        textAlign: 'center',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '2.5rem',
+                          fontWeight: 900,
+                          color: '#7d0a42',
+                          lineHeight: 1,
+                          marginBottom: 6,
+                        }}
+                      >
+                        {st.metricValue}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '0.84rem',
+                          fontWeight: 700,
+                          color: '#475569',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        {st.metricLabel}
+                      </div>
+                    </div>
+
+                    {/* Telemetry Data Grid */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 12,
+                        marginBottom: 20,
+                      }}
+                    >
+                      {st.telemetry.map((t, tIdx) => (
+                        <div
+                          key={tIdx}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
+                            background: '#ffffff',
+                            border: '1px solid #f1f5f9',
+                            borderRadius: 10,
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.82rem',
+                              color: '#64748b',
+                              fontFamily: 'var(--font-mono)',
+                              fontWeight: 700,
+                            }}
+                          >
+                            {t.label}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.88rem',
+                              color: '#0f172a',
+                              fontWeight: 800,
+                            }}
+                          >
+                            {t.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Guaranteed Exclusivity Seal */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        fontSize: '0.78rem',
+                        color: '#15803d',
+                        fontWeight: 700,
+                        borderTop: '1px solid #f1f5f9',
+                        paddingTop: 14,
+                      }}
+                    >
+                      <Shield size={15} />
+                      <span>Attingal TVM Campus Exclusive • No General Commerce</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

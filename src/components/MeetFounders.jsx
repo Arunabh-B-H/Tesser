@@ -52,30 +52,9 @@ export default function MeetFounders({ onOpenModal }) {
   const founders = [
     {
       id: 0,
-      name: 'Abhinav',
-      role: 'Co-Founder & Academic Vision Director',
-      badge: 'CO-FOUNDER // ACADEMIC ARCHITECT',
-      image: '/assets/founder_abhinav.jpg',
-      quote:
-        'When we founded Tesser in Attingal, our mission was unequivocal: build South Kerala’s premier citadel dedicated 100% exclusively to Cost and Management Accounting. No mixed batches, no diluted focus—just pure, surgical mastery of the ICMAI syllabus.',
-      bio: 'Steering Tesser’s academic philosophy, curriculum rigor, and daily testing discipline. Abhinav pioneered the signature 45-minute daily timed mock test engine that turns high-pressure exams into everyday habit.',
-      metrics: [
-        { label: 'Exclusivity Index', value: '100% CMA Only' },
-        { label: 'Academic Rigor', value: 'Daily 45m Mocks' },
-        { label: 'Teaching Ratio', value: '1:25 Micro-Batch' },
-      ],
-      commitments: [
-        'Curating practicing CMAs and chartered faculty with proven rank records',
-        'Direct student error diagnosis every evening by 6:00 PM',
-        'Personal mentoring to eliminate peer hesitation and fear of costing',
-      ],
-      visionTag: 'The Academic Precision Behind Attingal’s Top CMA Scorers',
-    },
-    {
-      id: 1,
       name: 'Ajmal',
-      role: 'Co-Founder & Executive Operations Director',
-      badge: 'CO-FOUNDER // CAMPUS & STRATEGY',
+      role: 'Founder & Executive Operations Director',
+      badge: 'FOUNDER // EXECUTIVE OPERATIONS & CAMPUS',
       image: '/assets/founder_ajmal.jpg',
       quote:
         'A student’s cognitive focus must never be compromised by travel exhaustion, unsafe accommodations, or lack of guidance. We engineered Tesser as a residential sanctuary with modern hostels, smart AC halls, and round-the-clock mentorship.',
@@ -91,6 +70,27 @@ export default function MeetFounders({ onOpenModal }) {
         'Corporate networking with Big 4 firms, PSUs, and MNC recruiters',
       ],
       visionTag: 'The Strategic Infrastructure Built for National Rank Holders',
+    },
+    {
+      id: 1,
+      name: 'Abhinav',
+      role: 'Co-Founder & Academic Vision Director',
+      badge: 'CO-FOUNDER // ACADEMIC VISION & CURRICULUM',
+      image: '/assets/founder_abhinav.jpg',
+      quote:
+        'When we founded Tesser in Attingal, our mission was unequivocal: build South Kerala’s premier citadel dedicated 100% exclusively to Cost and Management Accounting. No mixed batches, no diluted focus—just pure, surgical mastery of the ICMAI syllabus.',
+      bio: 'Steering Tesser’s academic philosophy, curriculum rigor, and daily testing discipline. Abhinav pioneered the signature 45-minute daily timed mock test engine that turns high-pressure exams into everyday habit.',
+      metrics: [
+        { label: 'Exclusivity Index', value: '100% CMA Only' },
+        { label: 'Academic Rigor', value: 'Daily 45m Mocks' },
+        { label: 'Teaching Ratio', value: '1:25 Micro-Batch' },
+      ],
+      commitments: [
+        'Curating practicing CMAs and chartered faculty with proven rank records',
+        'Direct student error diagnosis every evening by 6:00 PM',
+        'Personal mentoring to eliminate peer hesitation and fear of costing',
+      ],
+      visionTag: 'The Academic Precision Behind Attingal’s Top CMA Scorers',
     },
   ];
 
@@ -232,7 +232,7 @@ export default function MeetFounders({ onOpenModal }) {
             gap: 48,
           }}
         >
-          {/* LEFT: Pinned Luxury Portrait Showcase (Morphed by Tabs) */}
+          {/* LEFT: Pinned Luxury Portrait Showcase (CSS Grid Stack Crossfade) */}
           <div
             style={{
               width: '42%',
@@ -259,128 +259,142 @@ export default function MeetFounders({ onOpenModal }) {
               }}
             />
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeFounder}
-                initial={{ opacity: 0, scale: 0.94, rotateY: 8 }}
-                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                exit={{ opacity: 0, scale: 0.94, rotateY: -8 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  position: 'relative',
-                  zIndex: 2,
-                  borderRadius: 28,
-                  overflow: 'hidden',
-                  background: '#ffffff',
-                  border: '2px solid rgba(125, 10, 66, 0.25)',
-                  boxShadow:
-                    '0 30px 70px -15px rgba(125, 10, 66, 0.2), 0 10px 25px rgba(15, 23, 42, 0.06)',
-                }}
-              >
-                {/* 3:4 Aspect Ratio Portrait */}
-                <div style={{ position: 'relative', width: '100%', paddingTop: '125%' }}>
-                  <img
-                    src={current.image}
-                    alt={current.name}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'top center',
-                      transition: 'transform 0.6s ease',
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateAreas: '"stack"',
+                position: 'relative',
+                zIndex: 2,
+              }}
+            >
+              {founders.map((f, idx) => {
+                const isSelected = activeFounder === idx;
+                return (
+                  <motion.div
+                    key={f.id}
+                    initial={false}
+                    animate={{
+                      opacity: isSelected ? 1 : 0,
+                      scale: isSelected ? 1 : 0.96,
+                      pointerEvents: isSelected ? 'auto' : 'none',
                     }}
-                  />
-
-                  {/* Gradient Scrim */}
-                  <div
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background:
-                        'linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.15) 50%, rgba(15, 23, 42, 0.05) 100%)',
-                    }}
-                  />
-
-                  {/* Top-Right Leadership Tag */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 18,
-                      right: 18,
-                      background: 'rgba(255, 255, 255, 0.95)',
-                      color: '#7d0a42',
-                      fontSize: '0.72rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontWeight: 800,
-                      padding: '5px 12px',
-                      borderRadius: 9999,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                      letterSpacing: '0.04em',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
+                      gridArea: 'stack',
+                      borderRadius: 28,
+                      overflow: 'hidden',
+                      background: '#ffffff',
+                      border: '2px solid rgba(125, 10, 66, 0.25)',
+                      boxShadow:
+                        '0 30px 70px -15px rgba(125, 10, 66, 0.2), 0 10px 25px rgba(15, 23, 42, 0.06)',
                     }}
                   >
-                    <UserCheck size={13} />
-                    <span>FOUNDER DIRECT</span>
-                  </div>
+                    {/* 3:4 Aspect Ratio Portrait */}
+                    <div style={{ position: 'relative', width: '100%', paddingTop: '125%' }}>
+                      <img
+                        src={f.image}
+                        alt={f.name}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'top center',
+                          transition: 'transform 0.6s ease',
+                        }}
+                      />
 
-                  {/* Floating Identity Banner at the base of Portrait */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      padding: '26px 24px',
-                      backdropFilter: 'blur(8px)',
-                      background:
-                        'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.74rem',
-                        fontWeight: 800,
-                        color: '#fce7f1',
-                        letterSpacing: '0.08em',
-                        marginBottom: 4,
-                      }}
-                    >
-                      {current.badge}
+                      {/* Gradient Scrim */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background:
+                            'linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.15) 50%, rgba(15, 23, 42, 0.05) 100%)',
+                        }}
+                      />
+
+                      {/* Top-Right Leadership Tag */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 18,
+                          right: 18,
+                          background: 'rgba(255, 255, 255, 0.95)',
+                          color: '#7d0a42',
+                          fontSize: '0.72rem',
+                          fontFamily: 'var(--font-mono)',
+                          fontWeight: 800,
+                          padding: '5px 12px',
+                          borderRadius: 9999,
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                          letterSpacing: '0.04em',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                        }}
+                      >
+                        <UserCheck size={13} />
+                        <span>FOUNDER DIRECT</span>
+                      </div>
+
+                      {/* Floating Identity Banner at the base of Portrait */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          padding: '26px 24px',
+                          backdropFilter: 'blur(8px)',
+                          background:
+                            'linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 80%, transparent 100%)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.74rem',
+                            fontWeight: 800,
+                            color: '#fce7f1',
+                            letterSpacing: '0.08em',
+                            marginBottom: 4,
+                          }}
+                        >
+                          {f.badge}
+                        </div>
+                        <h3
+                          style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: '2rem',
+                            fontWeight: 900,
+                            color: '#ffffff',
+                            lineHeight: 1.1,
+                            marginBottom: 4,
+                          }}
+                        >
+                          {f.name}
+                        </h3>
+                        <div
+                          style={{
+                            fontSize: '0.88rem',
+                            color: '#cbd5e1',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {f.role}
+                        </div>
+                      </div>
                     </div>
-                    <h3
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '2rem',
-                        fontWeight: 900,
-                        color: '#ffffff',
-                        lineHeight: 1.1,
-                        marginBottom: 4,
-                      }}
-                    >
-                      {current.name}
-                    </h3>
-                    <div
-                      style={{
-                        fontSize: '0.88rem',
-                        color: '#cbd5e1',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {current.role}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* RIGHT: Dynamic Kinetic Editorial Story on Scroll */}
+          {/* RIGHT: Dynamic Kinetic Editorial Story on Scroll (CSS Grid Stack Crossfade) */}
           <div
             style={{
               width: '58%',
@@ -388,214 +402,301 @@ export default function MeetFounders({ onOpenModal }) {
               zIndex: 25,
             }}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeFounder}
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {/* Section Super-Tag */}
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '5px 14px',
-                    borderRadius: 9999,
-                    background: '#fdf2f7',
-                    border: '1.5px solid rgba(125, 10, 66, 0.22)',
-                    color: '#7d0a42',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.76rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.06em',
-                    marginBottom: 16,
-                  }}
-                >
-                  <Sparkles size={13} />
-                  <span>MEET OUR FOUNDERS // 0{activeFounder + 1} OF 02</span>
-                </div>
-
-                {/* Main Headline */}
-                <h2
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: 'clamp(2.2rem, 3.2vw, 2.9rem)',
-                    fontWeight: 900,
-                    color: '#0f172a',
-                    lineHeight: 1.15,
-                    marginBottom: 10,
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  Architects of the <br />
-                  <span className="gradient-text-plum">CMA Dimension.</span>
-                </h2>
-
-                <div
-                  style={{
-                    fontSize: '0.98rem',
-                    fontWeight: 700,
-                    color: '#7d0a42',
-                    fontFamily: 'var(--font-mono)',
-                    marginBottom: 18,
-                  }}
-                >
-                  {current.visionTag}
-                </div>
-
-                {/* Founder's Direct Quote Box */}
-                <div
-                  style={{
-                    background: '#faf8f9',
-                    border: '1.5px solid rgba(125, 10, 66, 0.16)',
-                    borderRadius: 20,
-                    padding: '24px 22px',
-                    marginBottom: 22,
-                    position: 'relative',
-                    boxShadow: '0 4px 16px rgba(125, 10, 66, 0.04)',
-                  }}
-                >
-                  <Quote
-                    size={36}
-                    style={{
-                      color: 'rgba(125, 10, 66, 0.12)',
-                      position: 'absolute',
-                      top: 14,
-                      right: 18,
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateAreas: '"stack"',
+              }}
+            >
+              {founders.map((f, idx) => {
+                const isSelected = activeFounder === idx;
+                return (
+                  <motion.div
+                    key={f.id}
+                    initial={false}
+                    animate={{
+                      opacity: isSelected ? 1 : 0,
+                      x: isSelected ? 0 : idx < activeFounder ? -20 : 20,
+                      pointerEvents: isSelected ? 'auto' : 'none',
                     }}
-                  />
-                  <p
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                      fontSize: '0.98rem',
-                      color: '#1e293b',
-                      lineHeight: 1.6,
-                      fontStyle: 'italic',
-                      fontWeight: 500,
-                      position: 'relative',
-                      zIndex: 2,
+                      gridArea: 'stack',
                     }}
                   >
-                    "{current.quote}"
-                  </p>
-                </div>
-
-                {/* Bio Summary */}
-                <p
-                  style={{
-                    color: '#475569',
-                    fontSize: '0.92rem',
-                    lineHeight: 1.6,
-                    marginBottom: 20,
-                  }}
-                >
-                  {current.bio}
-                </p>
-
-                {/* 3 Pillars / Commitments */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 10,
-                    marginBottom: 24,
-                  }}
-                >
-                  {current.commitments.map((c, i) => (
+                    {/* Section Super-Tag */}
                     <div
-                      key={i}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '5px 14px',
+                        borderRadius: 9999,
+                        background: '#fdf2f7',
+                        border: '1.5px solid rgba(125, 10, 66, 0.22)',
+                        color: '#7d0a42',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.76rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.06em',
+                        marginBottom: 16,
+                      }}
+                    >
+                      <Sparkles size={13} />
+                      <span>MEET OUR FOUNDERS // 0{idx + 1} OF 02</span>
+                    </div>
+
+                    {/* Main Headline */}
+                    <h2
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontSize: 'clamp(2.2rem, 3.2vw, 2.9rem)',
+                        fontWeight: 900,
+                        color: '#0f172a',
+                        lineHeight: 1.15,
+                        marginBottom: 10,
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      Architects of the <br />
+                      <span className="gradient-text-plum">CMA Dimension.</span>
+                    </h2>
+
+                    <div
+                      style={{
+                        fontSize: '0.98rem',
+                        fontWeight: 700,
+                        color: '#7d0a42',
+                        fontFamily: 'var(--font-mono)',
+                        marginBottom: 18,
+                      }}
+                    >
+                      {f.visionTag}
+                    </div>
+
+                    {/* Founder's Direct Quote Box */}
+                    <div
+                      style={{
+                        background: '#faf8f9',
+                        border: '1.5px solid rgba(125, 10, 66, 0.16)',
+                        borderRadius: 20,
+                        padding: '24px 22px',
+                        marginBottom: 22,
+                        position: 'relative',
+                        boxShadow: '0 4px 16px rgba(125, 10, 66, 0.04)',
+                      }}
+                    >
+                      <Quote
+                        size={36}
+                        style={{
+                          color: 'rgba(125, 10, 66, 0.12)',
+                          position: 'absolute',
+                          top: 14,
+                          right: 18,
+                        }}
+                      />
+                      <p
+                        style={{
+                          fontSize: '0.98rem',
+                          color: '#1e293b',
+                          lineHeight: 1.6,
+                          fontStyle: 'italic',
+                          fontWeight: 500,
+                          position: 'relative',
+                          zIndex: 2,
+                        }}
+                      >
+                        "{f.quote}"
+                      </p>
+                    </div>
+
+                    {/* Bio Summary */}
+                    <p
+                      style={{
+                        color: '#475569',
+                        fontSize: '0.92rem',
+                        lineHeight: 1.6,
+                        marginBottom: 20,
+                      }}
+                    >
+                      {f.bio}
+                    </p>
+
+                    {/* 3 Pillars / Commitments */}
+                    <div
                       style={{
                         display: 'flex',
-                        alignItems: 'center',
+                        flexDirection: 'column',
                         gap: 10,
-                        fontSize: '0.88rem',
-                        color: '#0f172a',
-                        fontWeight: 600,
+                        marginBottom: 24,
                       }}
                     >
-                      <CheckCircle2 size={16} style={{ color: '#7d0a42', flexShrink: 0 }} />
-                      <span>{c}</span>
+                      {f.commitments.map((c, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            fontSize: '0.88rem',
+                            color: '#0f172a',
+                            fontWeight: 600,
+                          }}
+                        >
+                          <CheckCircle2 size={16} style={{ color: '#7d0a42', flexShrink: 0 }} />
+                          <span>{c}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
 
-                {/* Telemetry Metrics Bar */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: 12,
-                    marginBottom: 26,
-                  }}
-                >
-                  {current.metrics.map((m, idx) => (
+                    {/* Telemetry Metrics Bar */}
                     <div
-                      key={idx}
                       style={{
-                        background: '#ffffff',
-                        border: '1px solid rgba(125, 10, 66, 0.16)',
-                        padding: '12px 14px',
-                        borderRadius: 14,
-                        textAlign: 'center',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: 12,
+                        marginBottom: 26,
                       }}
                     >
-                      <div
-                        style={{
-                          fontSize: '1.05rem',
-                          fontWeight: 900,
-                          color: '#7d0a42',
-                          fontFamily: 'var(--font-display)',
-                          marginBottom: 2,
-                        }}
-                      >
-                        {m.value}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.72rem',
-                          color: '#64748b',
-                          fontFamily: 'var(--font-mono)',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {m.label}
-                      </div>
+                      {f.metrics.map((m, mIdx) => (
+                        <div
+                          key={mIdx}
+                          style={{
+                            background: '#ffffff',
+                            border: '1px solid rgba(125, 10, 66, 0.16)',
+                            padding: '12px 14px',
+                            borderRadius: 14,
+                            textAlign: 'center',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: '1.05rem',
+                              fontWeight: 900,
+                              color: '#7d0a42',
+                              fontFamily: 'var(--font-display)',
+                              marginBottom: 2,
+                            }}
+                          >
+                            {m.value}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.72rem',
+                              color: '#64748b',
+                              fontFamily: 'var(--font-mono)',
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {m.label}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
 
-                {/* Action Buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <button
-                    onClick={() => {
-                      sound.playClick();
-                      if (onOpenModal) onOpenModal();
-                    }}
-                    className="btn-primary-plum shimmer-sweep"
-                    style={{ padding: '12px 24px', fontSize: '0.9rem' }}
-                  >
-                    <span>Schedule Founder Mentorship Desk</span>
-                    <ArrowRight size={16} />
-                  </button>
+                    {/* Action Buttons */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          if (onOpenModal) onOpenModal();
+                        }}
+                        className="btn-primary-plum shimmer-sweep"
+                        style={{ padding: '12px 24px', fontSize: '0.9rem' }}
+                      >
+                        <span>Schedule Founder Mentorship Desk</span>
+                        <ArrowRight size={16} />
+                      </button>
 
-                  <a
-                    href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(current.name)}.`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => sound.playClick()}
-                    className="btn-secondary-charcoal"
-                    style={{ padding: '12px 20px', fontSize: '0.9rem' }}
-                  >
-                    <WhatsAppIcon size={16} />
-                    <span>WhatsApp Office</span>
-                  </a>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                      <a
+                        href={`https://wa.me/919567115221?text=Hello%20Tesser%20Institute%2C%20I%20would%20like%20to%20connect%20regarding%20CMA%20admissions%20under%20the%20guidance%20of%20founders%20${encodeURIComponent(f.name)}.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => sound.playClick()}
+                        className="btn-secondary-charcoal"
+                        style={{ padding: '12px 20px', fontSize: '0.9rem' }}
+                      >
+                        <WhatsAppIcon size={16} />
+                        <span>WhatsApp Office</span>
+                      </a>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Non-Overlapping Transition Pill */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: 36,
+            position: 'relative',
+            zIndex: 30,
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#ffffff',
+              border: '1.5px solid rgba(125, 10, 66, 0.2)',
+              borderRadius: 9999,
+              padding: '6px 14px',
+              boxShadow: '0 4px 16px rgba(125, 10, 66, 0.08)',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '0.72rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 800,
+                color: '#64748b',
+                letterSpacing: '0.04em',
+              }}
+            >
+              TRANSITION:
+            </span>
+            <button
+              onClick={() => selectFounder(0)}
+              style={{
+                background: activeFounder === 0 ? '#7d0a42' : 'transparent',
+                color: activeFounder === 0 ? '#ffffff' : '#7d0a42',
+                border: 'none',
+                borderRadius: 9999,
+                padding: '4px 12px',
+                fontSize: '0.76rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              01 AJMAL
+            </button>
+            <span style={{ color: '#cbd5e1', fontSize: '0.75rem', fontWeight: 700 }}>→</span>
+            <button
+              onClick={() => selectFounder(1)}
+              style={{
+                background: activeFounder === 1 ? '#7d0a42' : 'transparent',
+                color: activeFounder === 1 ? '#ffffff' : '#7d0a42',
+                border: 'none',
+                borderRadius: 9999,
+                padding: '4px 12px',
+                fontSize: '0.76rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              02 ABHINAV
+            </button>
           </div>
         </div>
       </section>
@@ -700,7 +801,7 @@ export default function MeetFounders({ onOpenModal }) {
                     boxShadow: '0 4px 14px rgba(125, 10, 66, 0.08)',
                   }}
                 >
-                  FOUNDER 02 // OPERATIONS &amp; RESIDENCE
+                  CO-FOUNDER 02 // ACADEMIC VISION &amp; CURRICULUM
                 </span>
               </div>
             )}
